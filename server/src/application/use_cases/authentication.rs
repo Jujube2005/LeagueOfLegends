@@ -44,7 +44,7 @@ where
             return Err(anyhow::anyhow!("Invalid username or password"));
         }
 
-        let passport = Passport::new(brawler_entity.id);
+        let passport = Passport::new(brawler_entity.id, "Bearer".to_string(), None);
 
         // let access_token_claims = Claims {
         //     sub: brawler.id.to_string(),

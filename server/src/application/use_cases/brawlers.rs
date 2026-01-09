@@ -37,11 +37,11 @@ where
 
         let register_entity = register_model.to_entity();
 
-        let brawler_id = self.brawler_repository.register(register_entity).await?;
+        let passport = self.brawler_repository.register(register_entity).await?;
 
-        let passport = Passport::new(brawler_id);
         Ok(passport)
     }
+    
     pub async fn upload_avatar(
         &self,
         base64_image: String,
