@@ -1,17 +1,17 @@
 ### register with menta
-POST  {{base_url}}/brawler/register
+POST  {{base_url}}/brawlers/register
 Content-Type: application/json
 
 {
-    "username": "menta",
+    "username": "mentaa",
     "password": "P@ssw0rd",
     "display_name": "mental"
 }
 
-### register with prompt
+### login with prompt
 # @prompt username User Name
 # @prompt display_name Display Name
-POST  {{base_url}}/brawler/register
+POST  {{base_url}}/authentication/login
 Content-Type: application/json
 
 {
@@ -21,7 +21,7 @@ Content-Type: application/json
 }
 
 ### upload avatar
-POST  {{base_url}}/brawler/avatar
+POST  {{base_url}}/brawlers/avatar
 Content-Type: application/json
 Authorization: Bearer {{menta_token}}
 
