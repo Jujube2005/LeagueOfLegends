@@ -1,7 +1,7 @@
 //DTO สำหรับการรับส่งข้อมูลของ Brawler Passport
 
 export interface Passport {
-    token: string,
+    access_token: string,
     display_name: string,
     avatar_url?: string,
 }

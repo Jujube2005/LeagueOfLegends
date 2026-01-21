@@ -1,93 +1,103 @@
 .login-container {
+    margin-top: 15px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: 100vh; 
-    background-color: #fafafa; 
 
     h3 {
         margin: 0;
         padding: 0;
-        margin-bottom: 1.5rem;
+        margin-bottom: 1em;
+    }
+
+    .error {
+        color: #bb303b;
+        font-size: small;
         text-align: center;
-        font-weight: 500;
-        color: #333;
+        margin-top: 0.2em;
     }
 
     mat-card {
-        padding: 2.5rem;
-        width: 100%;
-        max-width: 400px; 
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        margin-top: 2em;
+        padding: 2em;
     }
 
+    div.login-spacer,
     form {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
+        width: 300px;
+        min-width: 200px;
+        max-width: 400px;
     }
 
     mat-form-field {
-        width: 100%;
-        margin-bottom: 0.8rem; 
+        /* border: 1px solid green; */
+        height: 50px;
+        margin-bottom: 1.2em;
         display: block;
     }
 
     button.blue {
-        margin-top: 1rem;
-        font-size: 1rem;
+        font-size: large;
         width: 100%;
-        height: 48px; 
         background-color: #3448c5;
-        color: white;
-        font-weight: 600;
-        letter-spacing: 1px;
+        color: rgb(241, 250, 250);
     }
 
     button.blue:disabled {
         background-color: #a1a9d6;
         color: #d4d9e9;
         cursor: not-allowed;
-        opacity: 0.8;
+        opacity: 0.6;
     }
+
+    .toggle {
+        color: #a2abb4;
+        width: 100%;
+        text-align: center;
+        font-size: small;
+    }
+
+    .toggle span {
+        color: #3448c5;
+        font-weight: 900;
+        cursor: pointer;
+    }
+
 
     div.login-spacer {
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 100%;
-        margin: 1.5rem 0;
+        position: relative;
+        line-height: 1.375rem;
         color: #a2abb4;
-        font-size: 0.9rem;
+        font-family: 300;
+        margin-top: 1em;
+        margin-bottom: 1em;
 
-        &::before, &::after {
-            content: "";
-            flex-grow: 1;
-            height: 1px;
-            background-color: #e0e0e0;
-        }
 
-        &::before { margin-right: 15px; }
-        &::after { margin-left: 15px; }
+        /* border: 1px solid green; */
     }
 
-    .toggle {
-        margin-top: 1rem;
-        color: #757575;
-        width: 100%;
-        text-align: center;
-        font-size: 0.9rem;
 
-        span {
-            color: #3448c5;
-            font-weight: 700;
-            cursor: pointer;
-            margin-left: 5px;
+    div.login-spacer::after {
+        margin-left: 12px;
+        border-bottom: 1px solid #a2abb4;
+    }
 
-            &:hover {
-                text-decoration: underline;
-            }
-        }
+
+    div.login-spacer::before {
+        margin-right: 12px;
+        border-bottom: 1px solid #a2abb4;
+    }
+
+
+    *::before,
+    *::after {
+        flex-grow: 1;
+        height: 1px;
+        content: "";
+        box-sizing: border-box;
     }
 }

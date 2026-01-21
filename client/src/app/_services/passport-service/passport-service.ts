@@ -20,44 +20,52 @@ export class PassportService {
     try {
       const passport = JSON.parse(jsonString) as Passport
       this.data.set(passport)
+      console.log(passport);
+      
     } catch (error) {
       return `${error}`
     }
     return null
   }
   
-  private savePassportToLocalStorage(passport: Passport): void {
+  private savePassportToLocalStorage(): void {
+    const passport = this.data()
+    if (!passport) return
     const jsonString = JSON.stringify(passport)
     localStorage.setItem(this._key, jsonString)
-    this.data.set(passport)
   }
 
   constructor() {
     this.loadPassportFormLocalStorage()
   }
 
-  async get(login: LoginModel):Promise<null | string> {
-    const api_url = this._base_url + '/authentication/login'
-      return await this.fetchPassport(api_url, login)
+  destroy() {
+    localStorage.removeItem(this._key)
+    this.data.set(undefined)
   }
 
-  private async fetchPassport(api_url: string, model: LoginModel | RegisterModel) {
+  async get(login: LoginModel):Promise<null | string> {
+    const api_url = this._base_url + '/authentication/login'
+      return await this.fatchPassport(api_url, login)
+  }
+
+  private async fatchPassport(api_url: string, _models: LoginModel | RegisterModel): Promise<null | string> {
     try {
-      const resulf = this._http.post<Passport>(api_url, model)
-      const passport = await firstValueFrom(resulf)
+      const result = this._http.post<Passport>(this._base_url + '/authentication/login', _models)
+      const passport = await firstValueFrom(result)
       this.data.set(passport)
-      this.savePassportToLocalStorage(passport)
-      
-    } catch (error: any) {
-      console.log(error);
-      return error.error
-      
+      this.savePassportToLocalStorage()
+      return null
+    } catch (error) {
+      // console.log(error)
+      // console.log(Error.ERROR)
+      return `${error}`
     }
   }
 
   async reginster(register: RegisterModel):Promise<null | string> {
     const api_url = this._base_url + '/brawlers/register'
-      return await this.fetchPassport(api_url, register)
+      return await this.fatchPassport(api_url, register)
 
 }
 }

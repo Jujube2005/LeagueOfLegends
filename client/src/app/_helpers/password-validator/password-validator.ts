@@ -1,7 +1,6 @@
 import { AbstractControl, ValidatorFn,  ValidationErrors} from "@angular/forms"
-import { form } from "@angular/forms/signals"
 
-export const passwordValidatorv= (min: number, max: number): ValidatorFn => {
+export const PasswordValidator = (min: number, max: number): ValidatorFn => {
   return (ctrl: AbstractControl): ValidationErrors | null => {
     const password = ctrl.value as string
     if (!password) return { required: true }

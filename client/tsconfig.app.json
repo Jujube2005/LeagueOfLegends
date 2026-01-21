@@ -8,7 +8,7 @@
   },
   "include": [
     "src/**/*.ts"
-  ],
+, "src/app/_helpers/password-validator"  ],
   "exclude": [
     "src/**/*.spec.ts"
   ]
