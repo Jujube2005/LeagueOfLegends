@@ -1,0 +1,146 @@
+.filter-form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    background: #f5f7fa;
+    padding: 1.2rem 1.5rem 1rem 1.5rem;
+    border-radius: 4px; /* More squared as per image */
+    box-shadow: none; /* Image looks flat */
+    margin-bottom: 0; /* Connected to table visually? No, separate */
+    margin-bottom: 1.5rem;
+    background-color: #fff; /* Image shows white background generally */
+}
+
+.filter-form h3 {
+    margin: 0;
+    margin-right: 10px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.filter-form input[type="text"],
+.filter-form select {
+    padding: 0.5rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px; /* Slightly rounded */
+    font-size: 14px;
+    background: #fff;
+    min-width: 200px;
+    height: 36px;
+    box-sizing: border-box;
+}
+
+.filter-form input[type="text"]:focus,
+.filter-form select:focus {
+    border-color: #1976d2;
+    outline: none;
+}
+
+
+.filter-form button {
+    padding: 0 1.5rem;
+    height: 36px;
+    border: none;
+    border-radius: 4px;
+    background: #1565c0; /* Blue button */
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+
+.filter-form button:hover {
+    background: #0d47a1;
+}
+
+
+@media (max-width: 600px) {
+    .filter-form {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.7rem;
+        padding: 0.7rem 0.7rem 0.5rem 0.7rem;
+    }
+
+
+    .filter-form input[type="text"],
+    .filter-form select {
+        min-width: 0;
+        width: 100%;
+    }
+}
+
+/* Mission List Table Styling */
+.mission-list {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border-radius: 4px;
+    /* box-shadow: 0 1px 3px rgba(0,0,0,0.1); */
+    overflow-x: auto;
+}
+
+
+.mission-list .header {
+    display: grid;
+    /* Grid columns to match image: Name, Description, Chief, Crew, Status, Created, Updated, Actions */
+    grid-template-columns: 1fr 2fr 1.2fr 1fr 1fr 1.5fr 1.5fr 0.8fr;
+    align-items: center;
+    padding: 10px 15px;
+    background: #f5f5f5; /* Light grey header */
+    font-weight: bold;
+    color: #333;
+    font-size: 14px;
+    border-bottom: 1px solid #eee;
+}
+
+
+.mission-list .contents {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1.2fr 1fr 1fr 1.5fr 1.5fr 0.8fr;
+    align-items: center;
+    padding: 12px 15px;
+    font-size: 14px;
+    border-bottom: 1px solid #f0f0f0;
+    color: #333;
+}
+
+
+.mission-list .contents:hover {
+    background: #fafafa;
+}
+
+.mission-list .contents .action.clickable {
+    color: #1976d2;
+    cursor: pointer;
+    text-decoration: none;
+}
+.mission-list .contents .action.clickable:hover {
+    text-decoration: underline;
+}
+
+.mission-list .name,
+.mission-list .description,
+.mission-list .chief,
+.mission-list .crew_count,
+.mission-list .status,
+.mission-list .created_at,
+.mission-list .updated_at,
+.mission-list .action {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-right: 10px;
+}
+
+@media (max-width: 900px) {
+    .mission-list .header,
+    .mission-list .contents {
+        grid-template-columns: 1.2fr 1.5fr 1fr 0.8fr 0.8fr 1fr 1fr 0.8fr;
+        font-size: 13px;
+        padding: 10px;
+    }
+}
