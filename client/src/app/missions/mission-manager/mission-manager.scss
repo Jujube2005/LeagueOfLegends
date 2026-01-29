@@ -1,3 +1,4 @@
+/* Floating button for .new-mission at bottom right */
 .new-mission {
     position: fixed;
     right: 2.5rem;
@@ -7,7 +8,6 @@
     border-radius: 50px;
     background: transparent;
 }
-
 
 .new-mission button {
     border-radius: 50px;
@@ -20,12 +20,10 @@
     transition: background 0.2s, box-shadow 0.2s;
 }
 
-
 .new-mission button:hover {
     background: #1565c0;
     box-shadow: 0 6px 20px rgba(25, 118, 210, 0.18);
 }
-
 
 @media (max-width: 600px) {
     .new-mission {
@@ -33,16 +31,13 @@
         bottom: 1rem;
     }
 
-
     .new-mission button {
         padding: 0.6rem 1.1rem;
         font-size: 1rem;
     }
 }
 
-
-
-
+/* Modern table-like styling for .mission-list and its children */
 .mission-list {
     display: flex;
     flex-direction: column;
@@ -54,7 +49,6 @@
     overflow-x: auto;
 }
 
-
 .mission-list .header,
 .mission-list .contents {
     display: grid;
@@ -64,7 +58,6 @@
     font-size: 1rem;
 }
 
-
 .mission-list .header {
     background: #f5f7fa;
     font-weight: 500;
@@ -73,18 +66,15 @@
     border-radius: 12px 12px 0 0;
 }
 
-
 .mission-list .contents {
     background: #fafbfc;
     border-bottom: 1px solid #ececec;
     transition: background 0.2s;
 }
 
-
 .mission-list .contents:hover {
     background: #f0f4f8;
 }
-
 
 .mission-list .name,
 .mission-list .description,
@@ -98,7 +88,6 @@
     white-space: nowrap;
 }
 
-
 .mission-list .contents .action {
     text-align: center;
     color: #1976d2;
@@ -106,9 +95,7 @@
     font-weight: 400;
 }
 
-
 @media (max-width: 900px) {
-
 
     .mission-list .header,
     .mission-list .contents {
@@ -118,9 +105,7 @@
     }
 }
 
-
 @media (max-width: 600px) {
-
 
     .mission-list .header,
     .mission-list .contents {
@@ -129,3 +114,5 @@
         padding: 0.3rem 0.2rem;
     }
 }
+
+/* intentionally left empty - restored to original state */

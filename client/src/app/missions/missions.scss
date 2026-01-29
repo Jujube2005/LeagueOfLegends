@@ -1,3 +1,4 @@
+/* Modern filter-form styling */
 .filter-form {
     display: flex;
     flex-wrap: wrap;
@@ -5,30 +6,20 @@
     gap: 1rem;
     background: #f5f7fa;
     padding: 1.2rem 1.5rem 1rem 1.5rem;
-    border-radius: 4px; /* More squared as per image */
-    box-shadow: none; /* Image looks flat */
-    margin-bottom: 0; /* Connected to table visually? No, separate */
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(25, 118, 210, 0.07);
     margin-bottom: 1.5rem;
-    background-color: #fff; /* Image shows white background generally */
-}
-
-.filter-form h3 {
-    margin: 0;
-    margin-right: 10px;
-    font-size: 16px;
-    font-weight: bold;
 }
 
 .filter-form input[type="text"],
 .filter-form select {
-    padding: 0.5rem 1rem;
-    border: 1px solid #ddd;
-    border-radius: 4px; /* Slightly rounded */
-    font-size: 14px;
+    padding: 0.6rem 1rem;
+    border: 1px solid #cfd8dc;
+    border-radius: 6px;
+    font-size: 1rem;
     background: #fff;
-    min-width: 200px;
-    height: 36px;
-    box-sizing: border-box;
+    transition: border 0.2s;
+    min-width: 180px;
 }
 
 .filter-form input[type="text"]:focus,
@@ -37,25 +28,22 @@
     outline: none;
 }
 
-
 .filter-form button {
-    padding: 0 1.5rem;
-    height: 36px;
+    padding: 0.6rem 1.3rem;
     border: none;
-    border-radius: 4px;
-    background: #1565c0; /* Blue button */
+    border-radius: 6px;
+    background: #1976d2;
     color: #fff;
-    font-size: 14px;
+    font-size: 1rem;
     font-weight: 500;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: background 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(25, 118, 210, 0.10);
 }
-
 
 .filter-form button:hover {
-    background: #0d47a1;
+    background: #1565c0;
 }
-
 
 @media (max-width: 600px) {
     .filter-form {
@@ -65,7 +53,6 @@
         padding: 0.7rem 0.7rem 0.5rem 0.7rem;
     }
 
-
     .filter-form input[type="text"],
     .filter-form select {
         min-width: 0;
@@ -73,58 +60,46 @@
     }
 }
 
-/* Mission List Table Styling */
 .mission-list {
     display: flex;
     flex-direction: column;
+    gap: 0.5rem;
     background: #fff;
-    border-radius: 4px;
-    /* box-shadow: 0 1px 3px rgba(0,0,0,0.1); */
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    padding: 0.5rem 0 1rem 0;
     overflow-x: auto;
 }
 
-
-.mission-list .header {
-    display: grid;
-    /* Grid columns to match image: Name, Description, Chief, Crew, Status, Created, Updated, Actions */
-    grid-template-columns: 1fr 2fr 1.2fr 1fr 1fr 1.5fr 1.5fr 0.8fr;
-    align-items: center;
-    padding: 10px 15px;
-    background: #f5f5f5; /* Light grey header */
-    font-weight: bold;
-    color: #333;
-    font-size: 14px;
-    border-bottom: 1px solid #eee;
-}
-
-
+.mission-list .header,
 .mission-list .contents {
     display: grid;
-    grid-template-columns: 1fr 2fr 1.2fr 1fr 1fr 1.5fr 1.5fr 0.8fr;
+    grid-template-columns: 1.5fr 2fr 1fr 1fr 1fr 1.5fr 1.5fr 1fr;
     align-items: center;
-    padding: 12px 15px;
-    font-size: 14px;
-    border-bottom: 1px solid #f0f0f0;
-    color: #333;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
 }
 
+.mission-list .header {
+    background: #f5f7fa;
+    font-weight: 500;
+    color: #333;
+    border-bottom: 2px solid #e0e0e0;
+    border-radius: 12px 12px 0 0;
+}
+
+.mission-list .contents {
+    background: #fafbfc;
+    border-bottom: 1px solid #ececec;
+    transition: background 0.2s;
+}
 
 .mission-list .contents:hover {
-    background: #fafafa;
-}
-
-.mission-list .contents .action.clickable {
-    color: #1976d2;
-    cursor: pointer;
-    text-decoration: none;
-}
-.mission-list .contents .action.clickable:hover {
-    text-decoration: underline;
+    background: #f0f4f8;
 }
 
 .mission-list .name,
 .mission-list .description,
-.mission-list .chief,
 .mission-list .crew_count,
 .mission-list .status,
 .mission-list .created_at,
@@ -133,14 +108,31 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    padding-right: 10px;
+}
+
+.mission-list .contents .action {
+    text-align: center;
+    color: #1976d2;
+    /* cursor: pointer; */
+    font-weight: 400;
 }
 
 @media (max-width: 900px) {
+
     .mission-list .header,
     .mission-list .contents {
-        grid-template-columns: 1.2fr 1.5fr 1fr 0.8fr 0.8fr 1fr 1fr 0.8fr;
-        font-size: 13px;
-        padding: 10px;
+        grid-template-columns: 1.2fr 1.5fr 0.8fr 0.8fr 1fr 1fr 0.8fr;
+        font-size: 0.95rem;
+        padding: 0.5rem 0.5rem;
+    }
+}
+
+@media (max-width: 600px) {
+
+    .mission-list .header,
+    .mission-list .contents {
+        grid-template-columns: 1fr 1.5fr 0.7fr 0.7fr 1fr 1fr 0.7fr;
+        font-size: 0.85rem;
+        padding: 0.3rem 0.2rem;
     }
 }

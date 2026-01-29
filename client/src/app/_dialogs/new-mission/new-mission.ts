@@ -1,26 +1,14 @@
-import { Component, inject } from '@angular/core';
-import { AddMission } from '../../_models/add-mission';
-import { MatDialogRef, MatDialogContent, MatDialogActions, MatDialogClose, MatDialogTitle } from '@angular/material/dialog';
-import { FormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { Component, inject } from '@angular/core'
+import { AddMission } from '../../_models/add-mission'
+import { MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog'
+import { MatButtonModule } from '@angular/material/button'
+import { FormsModule } from '@angular/forms'
 
 @Component({
   selector: 'app-new-mission',
-  standalone: true,
-  imports: [
-    FormsModule, 
-    MatDialogContent, 
-    MatDialogActions, 
-    MatDialogClose, 
-    MatButtonModule, 
-    MatInputModule, 
-    MatFormFieldModule,
-    MatDialogTitle
-  ],
+  imports: [MatDialogTitle, MatDialogContent, MatDialogActions, MatButtonModule, FormsModule],
   templateUrl: './new-mission.html',
-  styleUrl: './new-mission.scss'
+  styleUrl: './new-mission.scss',
 })
 export class NewMission {
   addMission: AddMission = {
@@ -36,8 +24,9 @@ export class NewMission {
 
   private clean(addMission: AddMission): AddMission {
     return {
-      name: addMission.name.trim() || 'untitle',
+      name: addMission.name.trim() || 'untitled',
       description: addMission.description?.trim() || undefined
     }
   }
 }
+

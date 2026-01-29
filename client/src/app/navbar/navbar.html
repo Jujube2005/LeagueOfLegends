@@ -1,8 +1,11 @@
 <mat-toolbar class="my-navbar">
     <span class="home-btn" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">
-        The Convergence
+        LoL
     </span>
-    <button class="menu-button" routerLink="/missions" routerLinkActive="active">My Missions</button>
+    <button class="menu-button" routerLink="/missions" routerLinkActive="active">Missions</button>
+    @if(display_name()){
+    <button class="button" routerLink="/chief" routerLinkActive="active">My Missions</button>
+    }
 
 
     <span class="spacer"></span>
