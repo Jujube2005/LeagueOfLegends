@@ -14,6 +14,10 @@ pub struct MissionModel {
     pub name: String,
     #[diesel(sql_type = Nullable<Text>)]
     pub description: Option<String>,
+    #[diesel(sql_type = Nullable<Varchar>)]
+    pub category: Option<String>,
+    #[diesel(sql_type = Int4)]
+    pub max_crew: i32,
     #[diesel(sql_type = Varchar)]
     pub status: String,
     #[diesel(sql_type = Int4)]
@@ -35,6 +39,8 @@ pub struct MissionModel {
 pub struct AddMissionModel {
     pub name: String,
     pub description: Option<String>,
+    pub category: Option<String>,
+    pub max_crew: i32,
 }
 
 impl AddMissionModel {
@@ -42,6 +48,8 @@ impl AddMissionModel {
         AddMissionEntity {
             name: self.name.clone(),
             description: self.description.clone(),
+            category: self.category.clone(),
+            max_crew: self.max_crew,
             status: MissionStatuses::Open.to_string(),
             chief_id,
         }
@@ -52,6 +60,8 @@ impl AddMissionModel {
 pub struct EditMissionModel {
     pub name: Option<String>,
     pub description: Option<String>,
+    pub category: Option<String>,
+    pub max_crew: Option<i32>,
 }
 
 impl EditMissionModel {
@@ -59,6 +69,8 @@ impl EditMissionModel {
         EditMissionEntity {
             name: self.name.clone(),
             description: self.description.clone(),
+            category: self.category.clone(),
+            max_crew: self.max_crew,
             chief_id,
         }
     }

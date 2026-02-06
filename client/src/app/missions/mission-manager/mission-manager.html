@@ -7,6 +7,7 @@
     <div class="header">
         <span class="name">Name</span>
         <span class="description">Description</span>
+        <span class="category">Category</span>
         <span class="crew_count">Number of Crew</span>
         <span class="status">Status</span>
         <span class="created_at">Created at</span>
@@ -18,12 +19,13 @@
     <div class="contents" (click)="navigateToMission(mission.id)">
         <span class="name">
             @if (hasJoinAlert(mission.id)) {
-                <span class="red-dot"></span>
+            <span class="red-dot"></span>
             }
             {{mission.name}}
         </span>
         <span class="description">{{mission.description}}</span>
-        <span class="crew_count">{{mission.crew_count}}</span>
+        <span class="category">{{mission.category}}</span>
+        <span class="crew_count">{{mission.crew_count}} / {{mission.max_crew}}</span>
         <span class="status">{{mission.status}}</span>
         <span class="created_at">{{mission.created_at | date:'short'}}</span>
         <span class="updated_at">{{mission.updated_at | date:'short'}}</span>

@@ -40,6 +40,12 @@ where
             ));
         }
 
+        if add_mission_model.max_crew < 2 || add_mission_model.max_crew > 10 {
+            return Err(anyhow::anyhow!(
+                "Mission capacity must be between 2 and 10"
+            ));
+        }
+
         let insert_mission_entity = add_mission_model.to_entity(chief_id);
 
         let result = self
@@ -65,6 +71,28 @@ where
                 ));
             } else {
                 edit_mission_model.name = Some(name.trim().to_string())
+            }
+        }
+
+        if let Some(max_crew) = edit_mission_model.max_crew {
+            if max_crew < 2 || max_crew > 10 {
+                return Err(anyhow::anyhow!(
+                    "Mission capacity must be between 2 and 10"
+                ));
+            }
+
+            // Check current crew count
+            let current_crew_count = self
+                .mission_viewing_repository
+                .crew_counting(mission_id)
+                .await
+                .unwrap_or(0); // If fails, defaulting to 0 might be risky but acceptable for basic validation
+            
+            if (max_crew as i64) < current_crew_count {
+                 return Err(anyhow::anyhow!(
+                    "Cannot reduce capacity below current crew count ({})",
+                    current_crew_count
+                ));
             }
         }
 

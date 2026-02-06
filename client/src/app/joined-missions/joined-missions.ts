@@ -1,20 +1,21 @@
-  // *เพิ่ม 
+// *เพิ่ม 
 
 import { Component, inject } from '@angular/core'
 import { MissionService } from '../_services/mission-service'
 import { Mission } from '../_models/mission'
 import { AsyncPipe, DatePipe } from '@angular/common'
 import { BehaviorSubject } from 'rxjs'
+import { RouterLink } from '@angular/router'
 
 @Component({
   selector: 'app-joined-missions',
-  imports: [AsyncPipe, DatePipe],
+  imports: [AsyncPipe, DatePipe, RouterLink],
   templateUrl: './joined-missions.html',
   styleUrl: './joined-missions.scss',
 })
 export class JoinedMissions {
   private _mission = inject(MissionService)
-  
+
   private _missionsSubject = new BehaviorSubject<Mission[]>([])
   readonly missions$ = this._missionsSubject.asObservable()
 

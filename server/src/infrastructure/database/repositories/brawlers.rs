@@ -147,6 +147,8 @@ SELECT
     missions.id,
     missions.name,
     missions.description,
+    missions.category,
+    missions.max_crew,
     missions.status,
     missions.chief_id,
     brawlers.display_name AS chief_display_name,

@@ -35,8 +35,28 @@ diesel::table! {
     }
 }
 
+diesel::table! {
+    mission_messages (id) {
+        id -> Int4,
+        mission_id -> Int4,
+        user_id -> Nullable<Int4>,
+        content -> Text,
+        #[max_length = 50]
+        #[sql_name = "type"]
+        type_ -> Varchar,
+        created_at -> Timestamp,
+    }
+}
+
 diesel::joinable!(crew_memberships -> brawlers (brawler_id));
 diesel::joinable!(crew_memberships -> missions (mission_id));
 diesel::joinable!(missions -> brawlers (chief_id));
+diesel::joinable!(mission_messages -> missions (mission_id));
+diesel::joinable!(mission_messages -> brawlers (user_id));
 
-diesel::allow_tables_to_appear_in_same_query!(brawlers, crew_memberships, missions,);
+diesel::allow_tables_to_appear_in_same_query!(
+    brawlers,
+    crew_memberships,
+    missions,
+    mission_messages,
+);

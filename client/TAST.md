@@ -133,7 +133,149 @@
 - [x] **Tech**: ใช้ WebSocket หรือ Server-Sent Events (SSE) ใน Rust (Axum รองรับอยู่แล้ว)
 
 ## 4. จัดหมวดหมู่ภารกิจ (Mission Categories/Tags)
-- **Concept**: แยกประเภทภารกิจให้ชัดเจน เช่น "Ranked", "Normal", "ARAM", "Clash"
+- [ ] **Concept**: แยกประเภทภารกิจให้ชัดเจน เช่น "game", "general", "sport", "work"
+- [ ] **Implementation**:
+    - [ ] Backend: เพิ่ม column `category` ในตาราง `missions`
+    - [ ] Frontend: เพิ่ม Dropdown filter ในหน้าค้นหา
+    - [ ] ส่ง query category ไป API
+
+## 5. MISSION CAPACITY
+- **Concept**:  - จำกัดจำนวนสมาชิก 2–10 คนต่อ mission
+                - Chief เลือกจำนวนได้ตอนสร้าง mission
 - **Implementation**:
-    - Backend: เพิ่ม column `category` หรือ `tags` ในตาราง `missions`
-    - Frontend: เพิ่ม Dropdown filter ในหน้าค้นหา
+    Server (Rust)
+    - [ ] Database: เพิ่ม column max_members
+    - [ ] Validate ตอนสร้าง mission max_members ต้องอยู่ระหว่าง 2–10
+    - [ ] Join Logic นับจำนวนสมาชิก
+    - ถ้า current >= max_members return error "Mission is full"
+    - [ ] API Response
+        เพิ่ม:
+        - current_members
+        - max_members
+    - [ ] ตอนแก้ไข mission ต้องห้ามลด max ต่ำกว่าจำนวนสมาชิกปัจจุบัน
+    Client (Angular)
+    - [ ] แสดงจำนวนสมาชิก เช่น 3 / 5 members
+    - [ ] Disable Join ถ้าเต็ม
+    - [ ] Chief เลือกจำนวนสมาชิกตอนสร้าง mission
+    - [ ] refresh หลัง join/leave
+
+## 6. CHAT TABLE (Foundation)
+- **Concept**:  - สร้าง table สำหรับ chat + system log
+- **Implementation**:
+    Server (Rust)
+    - [ ] Create table mission_messages
+            CREATE TABLE mission_messages (
+            id SERIAL PRIMARY KEY,
+            mission_id INT,
+            user_id INT NULL,
+            content TEXT,
+            type VARCHAR,      -- chat | system
+            created_at TIMESTAMP DEFAULT NOW()
+            );
+    - [ ] Repository save message
+    - [ ] get messages by mission
+    - [ ] API GET /api/mission/{id}/messages
+    Client (Angular)
+    - [ ] เปิดหน้า mission chat
+    - [ ] โหลดข้อความเก่า
+    - [ ] แสดง chat + system message
+
+## 7. WEBSOCKET ROOM PER MISSION
+- **Concept**:  - 1 mission = 1 websocket room
+- **Implementation**:
+    Server (Rust)
+    - [ ] Endpoint /ws/mission/{mission_id}
+    - [ ] เมื่อ connect: - join room username
+    - [ ] Data structure HashMap<mission_id, Vec<WebSocket>>
+    - [ ] เมื่อมี message: broadcast ไปทุกคนใน room
+    - [ ] ต้อง remove socket ตอน disconnect
+    Client (Angular)
+    - [ ] mission-socket.service.ts 
+            connect(missionId) open websocket
+            listen() subscribe message stream
+            send() ส่งข้อความไป server
+            
+## 8. JOIN/LEAVE REALTIME
+- **Concept**:  - เมื่อ join/leave ให้ขึ้นใน chat ทันที
+- **Implementation**:
+    Server (Rust)
+    - [ ] เมื่อ join mission: 
+            - save system message
+            "username joined mission"
+            - broadcast websocket
+    - [ ] เมื่อ leave:
+            "username left mission"
+    - [ ] เมื่อ mission start:
+            "Mission started
+    - [ ] ใช้ message type:
+            type = system
+    Client (Angular)
+    - [ ] รับ websocket message
+    - [ ] แสดงใน chat ทันที
+    - [ ] auto scroll chat
+
+## 9. INVITE SYSTEM
+- **Concept**:  - Chief invite คนเข้า mission
+- **Implementation**:
+    Database
+    - [ ] Create table mission_invites
+        CREATE TABLE mission_invites (
+        id SERIAL PRIMARY KEY,
+        mission_id INT,
+        user_id INT,
+        status VARCHAR DEFAULT 'pending'
+        );
+    Server (Rust)
+    - [ ] API invite
+            POST /api/mission/{id}/invite/{user_id}
+    - [ ] API accept
+            POST /api/mission/{id}/accept
+    - [ ] เมื่อ invite:
+            broadcast:
+            "username was invited"
+    - [ ] เมื่อ accept:
+            - join mission
+            - broadcast:
+            "username joined mission"
+    - [ ] ต้องกัน:
+            - invite ซ้ำ
+            - invite คนที่อยู่แล้ว
+    Client (Angular)
+    - [ ] ปุ่ม Invite
+    - [ ] หน้า notifications invite
+    - [ ] Accept invite
+    - [ ] auto join room chat
+
+## 10. ACTIVITY LOG UI
+- **Concept**:  - แสดง history mission ใช้ table mission_messages type = system
+- **Implementation**:
+    Client (Angular)
+    - [ ] Tab: Activity
+    - [ ] แสดง log:
+        - joined
+        - left
+        - started
+        - completed
+    [ ] filter:
+        Chat | Activity | All
+
+## REALTIME ARCHITECTURE
+    สร้าง service กลางใน Rust: MissionRealtimeService
+    หน้าที่:
+        - join_room
+        - leave_room
+        - broadcast_chat
+        - broadcast_system
+    โครง:
+        HashMap<mission_id, Vec<Socket>>
+
+## FRONTEND STRUCTURE
+    services/
+        - mission.service.ts
+        - mission-socket.service.ts
+
+    components/
+        - mission-chat.component
+        - joined-missions.component
+        - mission-manager.component
+        - invite-panel.component

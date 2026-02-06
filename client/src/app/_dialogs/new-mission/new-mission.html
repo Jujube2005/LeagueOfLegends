@@ -2,6 +2,17 @@
 <mat-dialog-content>
     <input type="text" [(ngModel)]="addMission.name" placeholder="Mission Name" />
     <textarea [(ngModel)]="addMission.description" placeholder="Mission Description"></textarea>
+    <select [(ngModel)]="addMission.category">
+        <option value="">-- Select Category --</option>
+        <option value="Game">Game</option>
+        <option value="General">General</option>
+        <option value="Sport">Sport</option>
+        <option value="Work">Work</option>
+    </select>
+    <div style="margin-bottom: 1rem;">
+        <label for="max_crew">Crew Capacity (2-10):</label>
+        <input id="max_crew" type="number" [(ngModel)]="addMission.max_crew" min="2" max="10" placeholder="Max Crew" />
+    </div>
 
     <mat-dialog-actions>
         <button matButton mat-dialog-close>Cancel</button>

@@ -9,6 +9,13 @@
         <option value="Completed">Completed</option>
         <option value="Failed">Failed</option>
     </select>
+    <select [(ngModel)]="filter.category">
+        <option value="">-- Select Category --</option>
+        <option value="Game">Game</option>
+        <option value="General">General</option>
+        <option value="Sport">Sport</option>
+        <option value="Work">Work</option>
+    </select>
     <button (click)="onSubmit()">Go</button>
 </div>
 <div class="mission-list">
@@ -16,6 +23,7 @@
     <div class="header">
         <span class="name">Name</span>
         <span class="description">Description</span>
+        <span class="category">Category</span>
         <span class="name">Chief</span>
         <span class="crew_count">Number of Crew</span>
         <span class="status">Status</span>
@@ -29,8 +37,9 @@
     <div class="contents">
         <span class="name">{{mission.name}}</span>
         <span class="description">{{mission.description}}</span>
+        <span class="category">{{mission.category}}</span>
         <span class="name">{{mission.chief_display_name}}</span>
-        <span class="crew_count">{{mission.crew_count}}</span>
+        <span class="crew_count">{{mission.crew_count}} / {{mission.max_crew}}</span>
         <span class="status">{{mission.status}}</span>
         <span class="created_at">{{mission.created_at | date:'short'}}</span>
         <span class="updated_at">{{mission.updated_at | date:'short'}}</span>
@@ -39,7 +48,16 @@
         <!-- *เพิ่ม  -->
         <div class="actions">
             @if(!mission.is_member && mission.chief_id !== userId()){
-                <button (click)="joinMission(mission.id)">Join</button>
+            <button (click)="joinMission(mission.id)"
+                [disabled]="mission.crew_count >= mission.max_crew || mission.status === 'Completed'">
+                @if(mission.crew_count >= mission.max_crew) {
+                Full
+                } @else if(mission.status === 'Completed') {
+                Completed
+                } @else {
+                Join
+                }
+            </button>
             }
         </div>
         }

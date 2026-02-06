@@ -88,6 +88,36 @@ pub fn establish_connection(database_url: &str) -> Result<PgPoolSquad> {
     WHERE NOT EXISTS (SELECT 1 FROM achievements WHERE name = 'Team Player');
     "#;
 
+    // Force integrate category column for missions
+    let raw_sql_missions = r#"
+    DO $$
+    BEGIN
+        BEGIN
+            ALTER TABLE missions ADD COLUMN category VARCHAR(255);
+        EXCEPTION
+            WHEN duplicate_column THEN NULL;
+        END;
+    END $$;
+    "#;
+    
+    conn.batch_execute(raw_sql_missions)
+       .map_err(|e| anyhow::anyhow!("Failed to add category column: {}", e))?;
+
+    // Force integrate max_crew column for missions
+    let raw_sql_max_crew = r#"
+    DO $$
+    BEGIN
+        BEGIN
+            ALTER TABLE missions ADD COLUMN max_crew INTEGER NOT NULL DEFAULT 5;
+        EXCEPTION
+            WHEN duplicate_column THEN NULL;
+        END;
+    END $$;
+    "#;
+    
+    conn.batch_execute(raw_sql_max_crew)
+       .map_err(|e| anyhow::anyhow!("Failed to add max_crew column: {}", e))?;
+
     conn.batch_execute(raw_sql)
         .map_err(|e| anyhow::anyhow!("Failed to force create achievements tables: {}", e))?;
     

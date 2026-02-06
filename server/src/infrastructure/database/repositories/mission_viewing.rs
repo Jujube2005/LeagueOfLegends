@@ -57,6 +57,8 @@ SELECT
     m.id,
     m.name,
     m.description,
+    m.category,
+    m.max_crew,
     m.status,
     m.chief_id,
     COALESCE(b.display_name, '') AS chief_display_name,
@@ -73,7 +75,7 @@ LEFT JOIN brawlers b ON b.id = m.chief_id
 LEFT JOIN crew_memberships cm ON cm.mission_id = m.id
 WHERE m.id = $1
 GROUP BY
-    m.id, b.display_name, m.name, m.description,
+    m.id, b.display_name, m.name, m.description, m.category, m.max_crew,
     m.status, m.chief_id, m.created_at, m.updated_at
 LIMIT 1
 "#;
@@ -108,6 +110,8 @@ SELECT
     m.id,
     m.name,
     m.description,
+    m.category,
+    m.max_crew,
     m.status,
     m.chief_id,
     COALESCE(b.display_name, '') AS chief_display_name,
@@ -124,6 +128,7 @@ LEFT JOIN brawlers b ON b.id = m.chief_id
 LEFT JOIN crew_memberships cm ON cm.mission_id = m.id
 WHERE ($1::varchar IS NULL OR m.status = $1)
   AND ($2::varchar IS NULL OR m.name ILIKE $2)
+  AND ($4::varchar IS NULL OR m.category = $4)
   AND m.chief_id <> $3
   AND NOT EXISTS (
     SELECT 1 FROM crew_memberships cm3
@@ -131,7 +136,7 @@ WHERE ($1::varchar IS NULL OR m.status = $1)
       AND cm3.brawler_id = $3
   )
 GROUP BY
-    m.id, b.display_name, m.name, m.description,
+    m.id, b.display_name, m.name, m.description, m.category, m.max_crew,
     m.status, m.chief_id, m.created_at, m.updated_at
 ORDER BY m.created_at DESC
 "#;
@@ -144,6 +149,9 @@ ORDER BY m.created_at DESC
                     mission_filter.name.as_ref().map(|n| format!("%{}%", n)),
                 )
                 .bind::<Int4, _>(brawler_id)
+                .bind::<Nullable<Varchar>, _>(
+                    mission_filter.category.as_ref().map(|c| c.to_string()),
+                )
                 .load::<MissionModel>(&mut conn)?;
             
             Ok(rows)
@@ -166,6 +174,8 @@ SELECT
     m.id,
     m.name,
     m.description,
+    m.category,
+    m.max_crew,
     m.status,
     m.chief_id,
     COALESCE(b.display_name, '') AS chief_display_name,
@@ -179,7 +189,7 @@ LEFT JOIN brawlers b ON b.id = m.chief_id
 LEFT JOIN crew_memberships cm ON cm.mission_id = m.id
 WHERE cm_join.brawler_id = $1
 GROUP BY
-    m.id, b.display_name, m.name, m.description,
+    m.id, b.display_name, m.name, m.description, m.category, m.max_crew,
     m.status, m.chief_id, m.created_at, m.updated_at
 ORDER BY m.created_at DESC
 "#;

@@ -7,3 +7,4 @@ pub mod mission_statuses;
 pub mod mission_summary;
 pub mod uploaded_img;
 pub mod achievement_model;
+pub mod mission_message_model;

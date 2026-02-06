@@ -56,6 +56,10 @@ fn api_serve(
             routers::crew_operation::routes(Arc::clone(&db_pool), Arc::clone(&notification_service)),
         )
         .nest(
+            "/mission-chat",
+            routers::mission_chat::routes(Arc::clone(&db_pool)),
+        )
+        .nest(
             "/mission-management",
             routers::mission_management::routes(Arc::clone(&db_pool)),
         )

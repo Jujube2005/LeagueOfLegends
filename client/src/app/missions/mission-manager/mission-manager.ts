@@ -49,9 +49,9 @@ export class MissionManager {
   hasJoinAlert(id: number) {
     return this.joinAlerts.has(id)
   }
-  
+
   clearJoinAlert(id: number) {
-      this.joinAlerts.delete(id)
+    this.joinAlerts.delete(id)
   }
 
   openDialog() {
@@ -65,6 +65,8 @@ export class MissionManager {
           id,
           name: addMission.name,
           description: addMission.description,
+          category: addMission.category,
+          max_crew: addMission.max_crew || 5,
           status: 'Open',
           chief_id: 0,
           chief_display_name,
@@ -82,7 +84,12 @@ export class MissionManager {
   // *เพิ่ม
   openEditDialog(mission: Mission) {
     const ref = this._dialog.open(NewMission, {
-      data: { name: mission.name, description: mission.description }
+      data: {
+        name: mission.name,
+        description: mission.description,
+        category: mission.category,
+        max_crew: mission.max_crew
+      }
     })
     ref.afterClosed().subscribe(async (updatedData: AddMission) => {
       if (updatedData) {

@@ -6,6 +6,8 @@ import { firstValueFrom, timeout } from 'rxjs'
 import { Mission } from '../_models/mission'
 import { AddMission } from '../_models/add-mission'
 import { MissionSummary } from '../_models/mission-summary'
+import { MissionMessage } from '../_models/mission-message'
+
 
 @Injectable({
   providedIn: 'root',
@@ -33,6 +35,9 @@ export class MissionService {
     }
     if (filter.status) {
       params.push(`status=${encodeURIComponent(filter.status)}`)
+    }
+    if (filter.category && filter.category.trim()) {
+      params.push(`category=${encodeURIComponent(filter.category.trim())}`)
     }
 
     return params.join("&")
@@ -115,5 +120,16 @@ export class MissionService {
 
   async transferOwnership(missionId: number, newChiefId: number): Promise<void> {
     await firstValueFrom(this._http.patch(`${this._base_url}/mission-management/${missionId}/transfer`, { new_chief_id: newChiefId }))
+  }
+
+  // *Chat
+  async getMessages(missionId: number): Promise<MissionMessage[]> {
+    const url = `${this._base_url}/mission-chat/${missionId}/messages`
+    return firstValueFrom(this._http.get<MissionMessage[]>(url))
+  }
+
+  async sendMessage(missionId: number, content: string): Promise<void> {
+    const url = `${this._base_url}/mission-chat/${missionId}/messages`
+    await firstValueFrom(this._http.post<void>(url, { content }))
   }
 }

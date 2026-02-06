@@ -51,19 +51,19 @@ where
 
         Err(e) => {
             let error_message = e.to_string();
-            if error_message.contains("Already joined") {
-                (
-                    StatusCode::CONFLICT,
-                    Json(json!({ "message": error_message })),
-                )
-                    .into_response()
+            let status = if error_message.contains("Already joined") {
+                StatusCode::CONFLICT
+            } else if error_message.contains("Mission is full") {
+                StatusCode::CONFLICT
+            } else if error_message.contains("Mission is not joinable") {
+                StatusCode::BAD_REQUEST
+            } else if error_message.contains("The Chief can not join") {
+                StatusCode::BAD_REQUEST
             } else {
-                (
-                    StatusCode::INTERNAL_SERVER_ERROR,
-                    Json(json!({ "message": error_message })),
-                )
-                    .into_response()
-            }
+                StatusCode::INTERNAL_SERVER_ERROR
+            };
+
+            (status, Json(json!({ "message": error_message }))).into_response()
         }
     }
 }
@@ -116,11 +116,15 @@ where
         .await
     {
         Ok(_) => (StatusCode::OK, Json(json!({ "message": "Member kicked" }))).into_response(),
-        Err(e) => (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(json!({ "message": e.to_string() })),
-        )
-            .into_response(),
+        Err(e) => {
+            let error_message = e.to_string();
+            let status = if error_message.contains("Only the Chief can kick members") {
+                StatusCode::FORBIDDEN
+            } else {
+                StatusCode::INTERNAL_SERVER_ERROR
+            };
+            (status, Json(json!({ "message": error_message }))).into_response()
+        }
     }
 }
 

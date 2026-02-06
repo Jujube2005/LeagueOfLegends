@@ -1,0 +1,29 @@
+<div class="chat-container">
+    <div class="messages-list">
+        <div *ngIf="loading" class="text-center p-2 text-gray-500">Loading messages...</div>
+
+        <div *ngFor="let msg of messages" class="message"
+            [ngClass]="{'system': msg.type_ === 'system', 'chat': msg.type_ === 'chat'}">
+
+            <div *ngIf="msg.type_ === 'chat'" class="sender-name">
+                {{ msg.user_display_name || 'Unknown' }}
+            </div>
+
+            <div class="msg-content">{{ msg.content }}</div>
+
+            <div class="timestamp">
+                {{ msg.created_at | date:'short' }}
+            </div>
+        </div>
+
+        <div *ngIf="!loading && messages.length === 0" class="text-center p-4 text-gray-500">
+            No messages yet. Start the conversation!
+        </div>
+    </div>
+
+    <div class="input-area">
+        <input type="text" [(ngModel)]="newMessage" (keyup.enter)="sendMessage()" placeholder="Type a message..."
+            [disabled]="loading">
+        <button (click)="sendMessage()" [disabled]="!newMessage.trim() || loading">Send</button>
+    </div>
+</div>

@@ -20,6 +20,12 @@ export const routes: Routes = [
     { path: 'missions', component: Missions, canActivate: [authGuard], runGuardsAndResolvers: 'always' },
     // *้เพิ่ม
     { path: 'joined-missions', component: JoinedMissions, canActivate: [authGuard], runGuardsAndResolvers: 'always' },
+    // *Chat Page
+    {
+        path: 'mission-chat/:id',
+        loadComponent: () => import('./mission-chat-page/mission-chat-page').then(m => m.MissionChatPage),
+        canActivate: [authGuard]
+    },
     // *้เพิ่ม
     { path: 'mission-summary', component: MissionSummaryComponent, canActivate: [authGuard], runGuardsAndResolvers: 'always' },
     // *้เพิ่ม
