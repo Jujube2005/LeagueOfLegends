@@ -61,6 +61,34 @@ impl MissionOperationRepository for MissionOperationPostgres {
             .set_status(mission_id, chief_id, MissionStatuses::Completed)
             .await?;
 
+        let db_pool = Arc::clone(&self.db_pool);
+        tokio::task::spawn_blocking(move || -> Result<()> {
+            let mut conn = db_pool.get().context("Failed to get DB connection")?;
+            use crate::infrastructure::database::schema::{brawlers, crew_memberships};
+            use diesel::prelude::*;
+
+            // Get crew members
+            let crew_ids = crew_memberships::table
+                .filter(crew_memberships::mission_id.eq(mission_id))
+                .select(crew_memberships::brawler_id)
+                .load::<i32>(&mut conn)?;
+
+            // Update crew
+            diesel::update(brawlers::table)
+                .filter(brawlers::id.eq_any(crew_ids))
+                .set(brawlers::mission_success_count.eq(brawlers::mission_success_count + 1))
+                .execute(&mut conn)?;
+
+            // Update chief
+            diesel::update(brawlers::table)
+                .filter(brawlers::id.eq(chief_id))
+                .set(brawlers::mission_success_count.eq(brawlers::mission_success_count + 1))
+                .execute(&mut conn)?;
+
+            Ok(())
+        })
+        .await??;
+
         Ok(result)
     }
 

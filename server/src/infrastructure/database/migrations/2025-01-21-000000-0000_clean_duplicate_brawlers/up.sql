@@ -1,6 +1,2 @@
--- Clean up duplicate usernames and delete all brawlers
-DELETE FROM crew_memberships;
-DELETE FROM missions;
-DELETE FROM brawlers;
-
-ALTER SEQUENCE brawlers_id_seq RESTART WITH 1;
+ALTER TABLE brawlers ADD COLUMN mission_success_count INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE brawlers ADD COLUMN mission_join_count INTEGER NOT NULL DEFAULT 0;

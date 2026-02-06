@@ -1,9 +1,10 @@
 use crate::{
     domain::{
-        repositories::brawlers::BrawlerRepository,
+        repositories::BrawlerRepository,
         value_objects::{
-            base64_img::Base64Img, brawler_model::RegisterBrawlerModel,
-            mission_model::MissionModel, uploaded_img::UploadedImg,
+            base64_img::Base64Img, brawler_model::BrawlerModel,
+            brawler_model::RegisterBrawlerModel, mission_model::MissionModel,
+            mission_summary::MissionSummaryModel, uploaded_img::UploadedImg,
         },
     },
     infrastructure::{argon2::hash, cloudinary::UploadImageOptions, jwt::jwt_model::Passport},
@@ -65,5 +66,17 @@ where
     pub async fn get_missions(&self, brawler_id: i32) -> Result<Vec<MissionModel>> {
         let missions = self.brawler_repository.get_missions(brawler_id).await?;
         Ok(missions)
+    }
+
+    // *เพิ่ม
+    pub async fn get_mission_summary(&self, brawler_id: i32) -> Result<MissionSummaryModel> {
+        let summary = self.brawler_repository.get_mission_summary(brawler_id).await?;
+        Ok(summary)
+    }
+
+    // *เพิ่ม
+    pub async fn get_leaderboard(&self) -> Result<Vec<BrawlerModel>> {
+        let leaderboard = self.brawler_repository.get_leaderboard().await?;
+        Ok(leaderboard)
     }
 }

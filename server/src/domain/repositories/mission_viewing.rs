@@ -8,7 +8,9 @@ use crate::domain::value_objects::{
 #[async_trait]
 pub trait MissionViewingRepository {
     async fn crew_counting(&self, mission_id: i32) -> Result<i64>;
-    async fn get_one(&self, mission_id: i32) -> Result<MissionModel>;
-    async fn get_all(&self, mission_filter: &MissionFilter) -> Result<Vec<MissionModel>>;
+    async fn get_one(&self, mission_id: i32, brawler_id: i32) -> Result<MissionModel>;
     async fn get_crew(&self, mission_id: i32) -> Result<Vec<BrawlerModel>>;
+    async fn get_all(&self, filter: &MissionFilter, brawler_id: i32) -> Result<Vec<MissionModel>>;
+    // *เพิ่ม
+    async fn get_joined_missions(&self, brawler_id: i32) -> Result<Vec<MissionModel>>;
 }

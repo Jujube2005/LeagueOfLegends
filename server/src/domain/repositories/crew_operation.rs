@@ -7,4 +7,6 @@ use crate::domain::entities::crew_memberships::CrewMemberShips;
 pub trait CrewOperationRepository {
     async fn join(&self, crew_member_ships: CrewMemberShips) -> Result<()>;
     async fn leave(&self, crew_member_ships: CrewMemberShips) -> Result<()>;
+    // *เพิ่ม
+    async fn is_member(&self, mission_id: i32, brawler_id: i32) -> Result<bool>;
 }

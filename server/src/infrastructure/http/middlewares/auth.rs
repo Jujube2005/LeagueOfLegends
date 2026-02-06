@@ -8,16 +8,24 @@ use axum::{
 use crate::{config::config_loader::get_jwt_env, infrastructure::jwt::verify_token};
 
 pub async fn auth(mut req: Request, next: Next) -> Result<Response, StatusCode> {
-    let header = req
-        .headers()
-        .get(header::AUTHORIZATION)
-        .and_then(|value| value.to_str().ok())
-        .ok_or(StatusCode::UNAUTHORIZED)?;
+    let token = if let Some(header) = req.headers().get(header::AUTHORIZATION) {
+        header
+            .to_str()
+            .ok()
+            .and_then(|value| value.strip_prefix("Bearer "))
+            .map(|s| s.to_string())
+    } else {
+        // Fallback: Check for token in query parameters (for EventSource)
+        req.uri()
+            .query()
+            .and_then(|q| {
+                q.split('&')
+                    .find(|param| param.starts_with("token="))
+                    .map(|param| param.trim_start_matches("token=").to_string())
+            })
+    };
 
-    let token = header
-        .strip_prefix("Bearer ")
-        .ok_or(StatusCode::UNAUTHORIZED)?
-        .to_string();
+    let token = token.ok_or(StatusCode::UNAUTHORIZED)?;
 
     let jwt_env = get_jwt_env().unwrap();
     let secret = jwt_env.secret;

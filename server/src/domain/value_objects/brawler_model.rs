@@ -25,6 +25,8 @@ impl RegisterBrawlerModel {
 
 #[derive(Debug, Clone, Serialize, Deserialize, QueryableByName)]
 pub struct BrawlerModel {
+    #[diesel(sql_type=Integer)]
+    pub id: i32,
     #[diesel(sql_type=VarChar)]
     pub display_name: String,
     #[diesel(sql_type=VarChar)]

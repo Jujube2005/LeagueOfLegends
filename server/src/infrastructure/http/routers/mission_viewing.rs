@@ -1,10 +1,11 @@
 use std::sync::Arc;
 
 use axum::{
-    Json, Router,
+    Json, Router, Extension,
     extract::{Path, Query, State},
     http::StatusCode,
     response::IntoResponse,
+    middleware,
     routing::get,
 };
 
@@ -14,19 +15,23 @@ use crate::{
         repositories::mission_viewing::MissionViewingRepository,
         value_objects::mission_filter::MissionFilter,
     },
-    infrastructure::database::{
-        postgresql_connection::PgPoolSquad, repositories::mission_viewing::MissionViewingPostgres,
+    infrastructure::{
+        database::{
+            postgresql_connection::PgPoolSquad, repositories::mission_viewing::MissionViewingPostgres,
+        },
+        http::middlewares::auth::auth,
     },
 };
 
 pub async fn get_one<T>(
     State(user_case): State<Arc<MissionViewingUseCase<T>>>,
+    Extension(brawler_id): Extension<i32>,
     Path(mission_id): Path<i32>,
 ) -> impl IntoResponse
 where
     T: MissionViewingRepository + Send + Sync,
 {
-    match user_case.get_one(mission_id).await {
+    match user_case.get_one(mission_id, brawler_id).await {
         Ok(model) => (StatusCode::OK, Json(model)).into_response(),
 
         Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response(),
@@ -49,14 +54,28 @@ where
 
 pub async fn get_all<T>(
     State(user_case): State<Arc<MissionViewingUseCase<T>>>,
+    Extension(brawler_id): Extension<i32>,
     filter: Query<MissionFilter>,
 ) -> impl IntoResponse
 where
     T: MissionViewingRepository + Send + Sync,
 {
-    match user_case.get_all(&filter).await {
+    match user_case.get_all(&filter, brawler_id).await {
         Ok(model) => (StatusCode::OK, Json(model)).into_response(),
 
+        Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response(),
+    }
+}
+
+pub async fn get_joined<T>(
+    State(user_case): State<Arc<MissionViewingUseCase<T>>>,
+    Extension(brawler_id): Extension<i32>,
+) -> impl IntoResponse
+where
+    T: MissionViewingRepository + Send + Sync,
+{
+    match user_case.get_joined_missions(brawler_id).await {
+        Ok(model) => (StatusCode::OK, Json(model)).into_response(),
         Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response(),
     }
 }
@@ -66,9 +85,10 @@ pub fn routes(db_pool: Arc<PgPoolSquad>) -> Router {
     let user_case = MissionViewingUseCase::new(Arc::new(viewing_repositiory));
 
     Router::new()
-        .route("/{mission_id}", get(get_one))
         .route("/filter", get(get_all))
+        .route("/joined", get(get_joined))
         .route("/crew/{mission_id}", get(get_crew))
-        // .route_layer(middleware::from_fn(auth))
+        .route("/{mission_id}", get(get_one))
+        .route_layer(middleware::from_fn(auth))
         .with_state(Arc::new(user_case))
 }

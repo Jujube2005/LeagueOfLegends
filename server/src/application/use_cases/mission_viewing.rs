@@ -25,13 +25,13 @@ where
         }
     }
 
-    pub async fn get_one(&self, mission_id: i32) -> Result<MissionModel> {
+    pub async fn get_one(&self, mission_id: i32, brawler_id: i32) -> Result<MissionModel> {
         // let crew_count = self
         //     .mission_viewing_repository
         //     .crew_counting(mission_id)
         //     .await?;
 
-        let model = self.mission_viewing_repository.get_one(mission_id).await?;
+        let model = self.mission_viewing_repository.get_one(mission_id, brawler_id).await?;
 
         // let result = model.to_model(crew_count);
 
@@ -43,8 +43,8 @@ where
         Ok(result)
     }
 
-    pub async fn get_all(&self, filter: &MissionFilter) -> Result<Vec<MissionModel>> {
-        let models = self.mission_viewing_repository.get_all(filter).await?;
+    pub async fn get_all(&self, filter: &MissionFilter, brawler_id: i32) -> Result<Vec<MissionModel>> {
+        let models = self.mission_viewing_repository.get_all(filter, brawler_id).await?;
 
         // let mut result = Vec::new();
 
@@ -58,6 +58,14 @@ where
         //     result.push(model.to_model(crew_count));
         // }
 
+        Ok(models)
+    }
+
+    pub async fn get_joined_missions(&self, brawler_id: i32) -> Result<Vec<MissionModel>> {
+        let models = self
+            .mission_viewing_repository
+            .get_joined_missions(brawler_id)
+            .await?;
         Ok(models)
     }
 }

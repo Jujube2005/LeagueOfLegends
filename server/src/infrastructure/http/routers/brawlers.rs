@@ -11,7 +11,7 @@ use axum::{
 use crate::{
     application::use_cases::brawlers::BrawlersUseCase,
     domain::{
-        repositories::brawlers::BrawlerRepository,
+        repositories::BrawlerRepository,
         value_objects::{brawler_model::RegisterBrawlerModel, uploaded_img::UploadBase64Img},
     },
     infrastructure::{
@@ -27,12 +27,27 @@ pub fn routes(db_pool: Arc<PgPoolSquad>) -> Router {
     let protected_routes = Router::new()
         .route("/avatar", post(upload_avatar))
         .route("/my-missions", get(get_missions))
+        .route("/mission-summary", get(get_mission_summary))
+        .route("/leaderboard", get(get_leaderboard))
         .route_layer(axum::middleware::from_fn(auth));
 
     Router::new()
         .merge(protected_routes)
         .route("/register", post(register))
         .with_state(Arc::new(user_case))
+}
+
+// *เพิ่ม
+pub async fn get_leaderboard<T>(
+    State(user_case): State<Arc<BrawlersUseCase<T>>>,
+) -> impl IntoResponse
+where
+    T: BrawlerRepository + Send + Sync,
+{
+    match user_case.get_leaderboard().await {
+        Ok(leaderboard) => (StatusCode::OK, Json(leaderboard)).into_response(),
+        Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response(),
+    }
 }
 
 pub async fn get_missions<T>(
@@ -44,6 +59,20 @@ where
 {
     match brawlers_use_case.get_missions(brawler_id).await {
         Ok(missions) => (StatusCode::OK, Json(missions)).into_response(),
+        Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response(),
+    }
+}
+
+// *เพิ่ม
+pub async fn get_mission_summary<T>(
+    State(user_case): State<Arc<BrawlersUseCase<T>>>,
+    Extension(brawler_id): Extension<i32>,
+) -> impl IntoResponse
+where
+    T: BrawlerRepository + Send + Sync,
+{
+    match user_case.get_mission_summary(brawler_id).await {
+        Ok(summary) => (StatusCode::OK, Json(summary)).into_response(),
         Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response(),
     }
 }

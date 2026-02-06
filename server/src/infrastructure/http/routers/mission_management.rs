@@ -92,6 +92,37 @@ where
     }
 }
 
+#[derive(serde::Deserialize)]
+pub struct TransferModel {
+    new_chief_id: i32,
+}
+
+pub async fn transfer<T1, T2>(
+    State(user_case): State<Arc<MissionManagementUseCase<T1, T2>>>,
+    Extension(user_id): Extension<i32>,
+    Path(mission_id): Path<i32>,
+    Json(model): Json<TransferModel>,
+) -> impl IntoResponse
+where
+    T1: MissionManagementRepository + Send + Sync,
+    T2: MissionViewingRepository + Send + Sync,
+{
+    match user_case
+        .transfer_ownership(mission_id, user_id, model.new_chief_id)
+        .await
+    {
+        Ok(_) => (
+            StatusCode::OK,
+            format!(
+                "Transferred mission_id: {} to chief_id: {}",
+                mission_id, model.new_chief_id
+            ),
+        )
+            .into_response(),
+        Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response(),
+    }
+}
+
 pub fn routes(db_pool: Arc<PgPoolSquad>) -> Router {
     let mission_repository = MissionManagementPostgres::new(Arc::clone(&db_pool));
     let viewing_repositiory = MissionViewingPostgres::new(Arc::clone(&db_pool));
@@ -99,9 +130,19 @@ pub fn routes(db_pool: Arc<PgPoolSquad>) -> Router {
         MissionManagementUseCase::new(Arc::new(mission_repository), Arc::new(viewing_repositiory));
 
     Router::new()
-        .route("/", post(add))
-        .route("/{mission_id}", patch(edit))
-        .route("/{mission_id}", delete(remove))
+        .route("/", post(add::<MissionManagementPostgres, MissionViewingPostgres>))
+        .route(
+            "/{id}",
+            patch(edit::<MissionManagementPostgres, MissionViewingPostgres>),
+        )
+        .route(
+            "/{id}/transfer",
+            patch(transfer::<MissionManagementPostgres, MissionViewingPostgres>),
+        )
+        .route(
+            "/{id}",
+            delete(remove::<MissionManagementPostgres, MissionViewingPostgres>),
+        )
         .route_layer(middleware::from_fn(auth))
         .with_state(Arc::new(user_case))
 }

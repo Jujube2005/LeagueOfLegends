@@ -8,7 +8,7 @@ use axum::{
         header::{AUTHORIZATION, CONTENT_TYPE},
     },
 };
-use tokio::net::TcpListener;
+use tokio::{net::TcpListener, sync::broadcast};
 use tower_http::{
     cors::{Any, CorsLayer},
     limit::RequestBodyLimitLayer,
@@ -19,10 +19,13 @@ use tracing::info;
 
 use crate::{
     config::config_model::DotEnvyConfig,
+    domain::{entities::notification::Notification,
+        services::notification_service::{NotificationService},
+    },
     infrastructure::{
         database::postgresql_connection::PgPoolSquad,
         http::routers::{self},
-    },
+    services::notification_service::NotificationServiceImpl},
 };
 
 fn static_serve() -> Router {
@@ -33,7 +36,11 @@ fn static_serve() -> Router {
     Router::new().fallback_service(service)
 }
 
-fn api_serve(db_pool: Arc<PgPoolSquad>) -> Router {
+fn api_serve(
+    db_pool: Arc<PgPoolSquad>,
+    notification_service: Arc<dyn NotificationService>,
+    tx: broadcast::Sender<Notification>,
+) -> Router {
     Router::new()
         .nest("/brawler", routers::brawlers::routes(Arc::clone(&db_pool)))
         .nest(
@@ -42,11 +49,11 @@ fn api_serve(db_pool: Arc<PgPoolSquad>) -> Router {
         )
         .nest(
             "/mission",
-            routers::mission_operation::routes(Arc::clone(&db_pool)),
+            routers::mission_operation::routes(Arc::clone(&db_pool), Arc::clone(&notification_service)),
         )
         .nest(
             "/crew",
-            routers::crew_operation::routes(Arc::clone(&db_pool)),
+            routers::crew_operation::routes(Arc::clone(&db_pool), Arc::clone(&notification_service)),
         )
         .nest(
             "/mission-management",
@@ -56,14 +63,25 @@ fn api_serve(db_pool: Arc<PgPoolSquad>) -> Router {
             "/authentication",
             routers::authentication::routes(Arc::clone(&db_pool)),
         )
+        .nest(
+            "/achievements",
+            routers::achievements::routes(Arc::clone(&db_pool)),
+        )
+        .nest(
+            "/notifications",
+            routers::notifications::routes(tx),
+        )
         .nest("/util", routers::default_router::routes())
         .fallback(|| async { (StatusCode::NOT_FOUND, "API not found") })
 }
 
 pub async fn start(config: Arc<DotEnvyConfig>, db_pool: Arc<PgPoolSquad>) -> Result<()> {
+    let (tx, _rx) = broadcast::channel(100);
+    let notification_svc: Arc<dyn NotificationService> = Arc::new(NotificationServiceImpl::new(tx.clone()));
+
     let app = Router::new()
         .merge(static_serve())
-        .nest("/api", api_serve(db_pool))
+        .nest("/api", api_serve(db_pool, notification_svc, tx))
         // .fallback(default_router::health_check)
         // .route("/health_check", get(default_router::health_check)
         // .route("/make-error", get(default_router::make_error)

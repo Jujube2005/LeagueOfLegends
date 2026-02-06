@@ -12,9 +12,10 @@ use crate::{
     config::config_loader::get_jwt_env,
     domain::{
         entities::brawlers::{BrawlerEntity, RegisterBrawlerEntity},
-        repositories::brawlers::BrawlerRepository,
+        repositories::BrawlerRepository,
         value_objects::{
-            base64_img::Base64Img, mission_model::MissionModel, uploaded_img::UploadedImg,
+            base64_img::Base64Img, brawler_model::BrawlerModel, mission_model::MissionModel,
+            mission_summary::MissionSummaryModel, uploaded_img::UploadedImg,
         },
     },
     infrastructure::{
@@ -77,6 +78,28 @@ impl BrawlerRepository for BrawlerPostgres {
         Ok(result)
     }
 
+    async fn find_by_id(&self, id: i32) -> Result<BrawlerEntity> {
+        let mut connection = Arc::clone(&self.db_pool).get()?;
+
+        let result = brawlers::table
+            .find(id)
+            .select(BrawlerEntity::as_select())
+            .first::<BrawlerEntity>(&mut connection)?;
+
+        Ok(result)
+    }
+
+    async fn find_by_email(&self, email: String) -> Result<BrawlerEntity> {
+        let mut connection = Arc::clone(&self.db_pool).get()?;
+
+        let result = brawlers::table
+            .filter(brawlers::email.eq(email))
+            .select(BrawlerEntity::as_select())
+            .first::<BrawlerEntity>(&mut connection)?;
+
+        Ok(result)
+    }
+
     async fn upload_base64img(
         &self,
         user_id: i32,
@@ -98,6 +121,22 @@ impl BrawlerRepository for BrawlerPostgres {
         Ok(uploaded_img)
     }
 
+    // *เพิ่ม
+    async fn get_leaderboard(&self) -> Result<Vec<BrawlerModel>> {
+        use diesel::sql_query;
+        let mut conn = Arc::clone(&self.db_pool).get()?;
+
+        let result = sql_query(
+            "SELECT id, display_name, COALESCE(avatar_url, '') as avatar_url, mission_success_count, mission_join_count 
+             FROM brawlers 
+             ORDER BY mission_success_count DESC, mission_join_count DESC, id ASC 
+             LIMIT 10",
+        )
+        .load::<BrawlerModel>(&mut conn)?;
+
+        Ok(result)
+    }
+
     async fn get_missions(&self, brawler_id: i32) -> Result<Vec<MissionModel>> {
         let mut conn = Arc::clone(&self.db_pool).get()?;
 
@@ -112,6 +151,7 @@ SELECT
     missions.chief_id,
     brawlers.display_name AS chief_display_name,
     (SELECT COUNT(*) FROM crew_memberships WHERE crew_memberships.mission_id = missions.id) AS crew_count,
+    false AS is_member,
     missions.created_at,
     missions.updated_at
 FROM missions
@@ -126,6 +166,42 @@ ORDER BY missions.created_at DESC
             .load::<MissionModel>(&mut conn)?;
 
         Ok(results)
+    }
+
+    async fn get_mission_summary(&self, brawler_id: i32) -> Result<MissionSummaryModel> {
+        let mut conn = Arc::clone(&self.db_pool).get()?;
+
+        let sql = r#"
+SELECT
+    (SELECT COUNT(*)::BIGINT FROM missions WHERE chief_id = $1 AND deleted_at IS NULL) AS created_count,
+    (SELECT COUNT(*)::BIGINT FROM crew_memberships WHERE brawler_id = $1) AS joined_count,
+    (
+        (SELECT COUNT(*)::BIGINT
+        FROM missions m
+        INNER JOIN crew_memberships cm ON m.id = cm.mission_id
+        WHERE cm.brawler_id = $1 AND m.status = 'Completed')
+        +
+        (SELECT COUNT(*)::BIGINT
+        FROM missions m2
+        WHERE m2.chief_id = $1 AND m2.status = 'Completed')
+    ) AS completed_count,
+    (
+        (SELECT COUNT(*)::BIGINT
+        FROM missions m
+        INNER JOIN crew_memberships cm ON m.id = cm.mission_id
+        WHERE cm.brawler_id = $1 AND m.status = 'Failed')
+        +
+        (SELECT COUNT(*)::BIGINT
+        FROM missions m3
+        WHERE m3.chief_id = $1 AND m3.status = 'Failed')
+    ) AS failed_count
+        "#;
+
+        let summary = diesel::sql_query(sql)
+            .bind::<diesel::sql_types::Int4, _>(brawler_id)
+            .get_result::<MissionSummaryModel>(&mut conn)?;
+
+        Ok(summary)
     }
 
     async fn crew_counting(&self, mission_id: i32) -> Result<u32> {

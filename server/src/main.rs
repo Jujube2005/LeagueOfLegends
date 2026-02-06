@@ -21,7 +21,7 @@ async fn main() {
     };
 
     info!(".ENV LOADED");
-
+    // Trigger Rebuild - Force Clean
     let postgres_pool = match postgresql_connection::establish_connection(&dotenvy_env.database.url)
     {
         Ok(pool) => pool,
