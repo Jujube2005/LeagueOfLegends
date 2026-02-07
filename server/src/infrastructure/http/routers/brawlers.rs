@@ -29,6 +29,7 @@ pub fn routes(db_pool: Arc<PgPoolSquad>) -> Router {
         .route("/my-missions", get(get_missions))
         .route("/mission-summary", get(get_mission_summary))
         .route("/leaderboard", get(get_leaderboard))
+        .route("/all", get(get_all_brawlers))
         .route_layer(axum::middleware::from_fn(auth));
 
     Router::new()
@@ -105,6 +106,18 @@ where
     {
         Ok(upload_img) => (StatusCode::OK, Json(upload_img)).into_response(),
 
+        Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response(),
+    }
+}
+
+pub async fn get_all_brawlers<T>(
+    State(user_case): State<Arc<BrawlersUseCase<T>>>,
+) -> impl IntoResponse
+where
+    T: BrawlerRepository + Send + Sync,
+{
+    match user_case.get_all_brawlers().await {
+        Ok(brawlers) => (StatusCode::OK, Json(brawlers)).into_response(),
         Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response(),
     }
 }

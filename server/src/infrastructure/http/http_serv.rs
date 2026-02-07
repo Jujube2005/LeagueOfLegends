@@ -76,6 +76,10 @@ fn api_serve(
             "/notifications",
             routers::notifications::routes(tx),
         )
+        .nest(
+            "/mission-invites",
+            routers::mission_invites::routes(Arc::clone(&db_pool)),
+        )
         .nest("/util", routers::default_router::routes())
         .fallback(|| async { (StatusCode::NOT_FOUND, "API not found") })
 }

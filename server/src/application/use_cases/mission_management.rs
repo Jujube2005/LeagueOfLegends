@@ -106,16 +106,7 @@ where
         Ok(result)
     }
 
-    pub async fn transfer_ownership(
-        &self,
-        mission_id: i32,
-        current_chief_id: i32,
-        new_chief_id: i32,
-    ) -> Result<()> {
-        self.mission_management_repository
-            .transfer_ownership(mission_id, current_chief_id, new_chief_id)
-            .await
-    }
+
 
     pub async fn remove(&self, mission_id: i32, chief_id: i32) -> Result<()> {
         self.mission_management_repository

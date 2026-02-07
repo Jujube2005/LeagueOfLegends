@@ -215,15 +215,15 @@ pub fn routes(
 
     Router::new()
         .route(
-            "/join/{mission_id}",
+            "/join/:mission_id",
             post(join::<CrewOperationPostgres, MissionViewingPostgres, AchievementRepositoryImpl, BrawlerPostgres>),
         )
         .route(
-            "/leave/{mission_id}",
+            "/leave/:mission_id",
             delete(leave::<CrewOperationPostgres, MissionViewingPostgres, AchievementRepositoryImpl, BrawlerPostgres>),
         )
         .route(
-            "/kick/{mission_id}",
+            "/kick/:mission_id",
             post(kick::<CrewOperationPostgres, MissionViewingPostgres, AchievementRepositoryImpl, BrawlerPostgres>),
         )
         .layer(Extension(mission_message_repository))

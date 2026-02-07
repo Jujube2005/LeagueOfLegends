@@ -30,6 +30,6 @@ where
             type_: "chat".to_string(),
         };
 
-        self.repository.create(entity).await
+        self.repository.create(entity).await.map(|_| ())
     }
 }

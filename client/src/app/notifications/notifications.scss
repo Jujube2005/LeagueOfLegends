@@ -1,0 +1,90 @@
+.notifications-container {
+    padding: 24px;
+    max-width: 800px;
+    margin: 0 auto;
+
+    .header {
+        margin-bottom: 24px;
+
+        h1 {
+            color: #f0f0f0;
+            font-size: 24px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            margin: 0;
+        }
+    }
+
+    .invites-list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .invite-card {
+        background-color: #1e1e1e;
+        color: #e0e0e0;
+        border-radius: 8px;
+
+        mat-card-header {
+            .invite-avatar {
+                background-color: rgba(255, 255, 255, 0.1);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+
+                mat-icon {
+                    color: #c9aa71;
+                }
+            }
+
+            mat-card-title {
+                color: #fff;
+                font-size: 16px;
+                font-weight: 500;
+            }
+
+            mat-card-subtitle {
+                color: #aaa;
+            }
+        }
+
+        mat-card-content {
+            padding-top: 16px;
+
+            p {
+                margin: 0;
+                line-height: 1.5;
+
+                strong {
+                    color: #c9aa71;
+                }
+            }
+        }
+    }
+
+    .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 48px;
+        background-color: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        color: #888;
+
+        .empty-icon {
+            font-size: 48px;
+            width: 48px;
+            height: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        p {
+            font-size: 16px;
+            margin: 0;
+        }
+    }
+}

@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, NgZone } from '@angular/core';
 import { Subject } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { PassportService } from './passport-service';
@@ -11,6 +11,7 @@ export class MissionSocketService {
     public messages$ = this.messageSubject.asObservable();
 
     private passport = inject(PassportService);
+    private zone = inject(NgZone);
 
     connect(missionId: number) {
         if (this.socket) {
@@ -56,7 +57,9 @@ export class MissionSocketService {
                     type_: data.type,
                     created_at: data.created_at
                 };
-                this.messageSubject.next(msg);
+                this.zone.run(() => {
+                    this.messageSubject.next(msg);
+                });
             } catch (e) {
                 console.error("Error parsing WS message", e);
             }

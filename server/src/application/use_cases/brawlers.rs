@@ -79,4 +79,9 @@ where
         let leaderboard = self.brawler_repository.get_leaderboard().await?;
         Ok(leaderboard)
     }
+
+    pub async fn get_all_brawlers(&self) -> Result<Vec<BrawlerModel>> {
+        let brawlers = self.brawler_repository.get_all_brawlers().await?;
+        Ok(brawlers)
+    }
 }

@@ -36,4 +36,9 @@ export class UserService {
     const url = this._base_url + '/leaderboard'
     return await firstValueFrom(this._http.get<Brawler[]>(url))
   }
+
+  async getAllBrawlers(): Promise<Brawler[]> {
+    const url = this._base_url + '/all'
+    return await firstValueFrom(this._http.get<Brawler[]>(url))
+  }
 }

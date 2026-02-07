@@ -218,4 +218,18 @@ SELECT
 
         Ok(count)
     }
+
+    async fn get_all_brawlers(&self) -> Result<Vec<BrawlerModel>> {
+        use diesel::sql_query;
+        let mut conn = Arc::clone(&self.db_pool).get()?;
+
+        let result = sql_query(
+            "SELECT id, display_name, COALESCE(avatar_url, '') as avatar_url, mission_success_count, mission_join_count 
+             FROM brawlers 
+             ORDER BY display_name ASC",
+        )
+        .load::<BrawlerModel>(&mut conn)?;
+
+        Ok(result)
+    }
 }

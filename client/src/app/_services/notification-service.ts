@@ -22,20 +22,25 @@ export class NotificationService {
   constructor(private zone: NgZone) {
     // Attempt to connect immediately if user is already logged in
     this.connect();
-    
+
     // Watch for passport changes to connect/disconnect automatically
     effect(() => {
-        if (this.passportService.data()) {
-            this.connect();
-        } else {
-            this.disconnect();
-        }
+      if (this.passportService.data()) {
+        this.connect();
+      } else {
+        this.disconnect();
+      }
     });
   }
 
+  showLocalNotification(notification: Notification) {
+    this.zone.run(() => {
+      this.notificationSubject.next(notification);
+    });
+  }
   connect(): void {
     if (this.eventSource) {
-        this.eventSource.close();
+      this.eventSource.close();
     }
 
     if (typeof EventSource !== 'undefined') {
@@ -48,41 +53,41 @@ export class NotificationService {
       this.eventSource = new EventSource(url);
 
       this.eventSource.onopen = (event) => {
-          console.log('[NotificationService] Connection opened');
+        console.log('[NotificationService] Connection opened');
       };
 
       this.eventSource.onmessage = (event) => {
         console.log('[NotificationService] Message received:', event.data);
         this.zone.run(() => {
-            try {
-                const data = JSON.parse(event.data);
-                const notification: Notification = {
-                    title: data.title,
-                    message: data.message,
-                    type: data.notification_type,
-                    metadata: data.metadata
-                };
-                console.log('[NotificationService] Emitting notification:', notification);
-                this.notificationSubject.next(notification);
-            } catch (e) {
-                console.error('[NotificationService] Error parsing notification', e);
-            }
+          try {
+            const data = JSON.parse(event.data);
+            const notification: Notification = {
+              title: data.title,
+              message: data.message,
+              type: data.notification_type,
+              metadata: data.metadata
+            };
+            console.log('[NotificationService] Emitting notification:', notification);
+            this.notificationSubject.next(notification);
+          } catch (e) {
+            console.error('[NotificationService] Error parsing notification', e);
+          }
         });
       };
-      
+
       this.eventSource.onerror = (error) => {
-          console.error('[NotificationService] EventSource error:', error);
-          if (this.eventSource?.readyState === EventSource.CLOSED) {
-             console.log('[NotificationService] Connection closed');
-          }
+        console.error('[NotificationService] EventSource error:', error);
+        if (this.eventSource?.readyState === EventSource.CLOSED) {
+          console.log('[NotificationService] Connection closed');
+        }
       };
     }
   }
 
   disconnect() {
-      if (this.eventSource) {
-          this.eventSource.close();
-          this.eventSource = undefined;
-      }
+    if (this.eventSource) {
+      this.eventSource.close();
+      this.eventSource = undefined;
+    }
   }
 }

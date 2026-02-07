@@ -7,3 +7,4 @@ pub mod mission_operation;
 pub mod mission_viewing;
 pub mod achievements;
 pub mod mission_messages;
+pub mod mission_invites;

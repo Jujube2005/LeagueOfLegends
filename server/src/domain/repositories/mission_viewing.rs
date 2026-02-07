@@ -6,7 +6,7 @@ use crate::domain::value_objects::{
 };
 
 #[async_trait]
-pub trait MissionViewingRepository {
+pub trait MissionViewingRepository: Send + Sync {
     async fn crew_counting(&self, mission_id: i32) -> Result<i64>;
     async fn get_one(&self, mission_id: i32, brawler_id: i32) -> Result<MissionModel>;
     async fn get_crew(&self, mission_id: i32) -> Result<Vec<BrawlerModel>>;

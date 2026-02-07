@@ -118,9 +118,7 @@ export class MissionService {
     await firstValueFrom(this._http.post(`${this._base_url}/crew/kick/${missionId}`, { member_id: memberId }))
   }
 
-  async transferOwnership(missionId: number, newChiefId: number): Promise<void> {
-    await firstValueFrom(this._http.patch(`${this._base_url}/mission-management/${missionId}/transfer`, { new_chief_id: newChiefId }))
-  }
+
 
   // *Chat
   async getMessages(missionId: number): Promise<MissionMessage[]> {

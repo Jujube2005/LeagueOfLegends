@@ -6,31 +6,47 @@
         </div>
     </div>
 
+    <div class="invites-section" *ngIf="invites.length > 0">
+        <h3>Pending Invites ({{invites.length}})</h3>
+        <div class="invites-list">
+            <div class="invite-card" *ngFor="let invite of invites">
+                <div class="details">
+                    <span class="mission-name">{{invite.mission_name}}</span>
+                    <span class="inviter">Invited by: {{invite.chief_name}}</span>
+                </div>
+                <div class="actions">
+                    <button (click)="acceptInvite(invite.id)" class="accept">Accept</button>
+                    <button (click)="declineInvite(invite.id)" class="decline">Decline</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="achievements-section">
         <h3>Achievements</h3>
         <div class="achievements-list">
             @for (achievement of achievements; track achievement.id) {
-                <div class="achievement-card" [class.earned]="achievement.is_earned">
-                    <div class="icon">
-                        @if (achievement.icon_url && !achievement.icon_url.startsWith('assets/')) {
-                             <img [src]="achievement.icon_url" [alt]="achievement.name">
-                        } @else {
-                             <!-- Fallback/Placeholder if no real image -->
-                             <div class="placeholder-icon">{{ achievement.name.charAt(0) }}</div>
-                        }
-                    </div>
-                    <div class="details">
-                        <span class="name">{{ achievement.name }}</span>
-                        <span class="description">{{ achievement.description }}</span>
-                        @if (achievement.is_earned) {
-                            <span class="earned-date">Earned on {{ achievement.earned_at | date:'mediumDate' }}</span>
-                        } @else {
-                            <span class="locked-status">Locked</span>
-                        }
-                    </div>
+            <div class="achievement-card" [class.earned]="achievement.is_earned">
+                <div class="icon">
+                    @if (achievement.icon_url && !achievement.icon_url.startsWith('assets/')) {
+                    <img [src]="achievement.icon_url" [alt]="achievement.name">
+                    } @else {
+                    <!-- Fallback/Placeholder if no real image -->
+                    <div class="placeholder-icon">{{ achievement.name.charAt(0) }}</div>
+                    }
                 </div>
+                <div class="details">
+                    <span class="name">{{ achievement.name }}</span>
+                    <span class="description">{{ achievement.description }}</span>
+                    @if (achievement.is_earned) {
+                    <span class="earned-date">Earned on {{ achievement.earned_at | date:'mediumDate' }}</span>
+                    } @else {
+                    <span class="locked-status">Locked</span>
+                    }
+                </div>
+            </div>
             } @empty {
-                <p>No achievements available.</p>
+            <p>No achievements available.</p>
             }
         </div>
     </div>

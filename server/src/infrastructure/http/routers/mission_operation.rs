@@ -160,9 +160,9 @@ pub fn routes(db_pool: Arc<PgPoolSquad>, notification_service: Arc<dyn Notificat
     );
 
     Router::new()
-        .route("/in-progress/{mission_id}", patch(in_progress::<MissionOperationPostgres, MissionViewingPostgres, AchievementRepositoryImpl, BrawlerPostgres>))
-        .route("/to-completed/{mission_id}", patch(to_completed::<MissionOperationPostgres, MissionViewingPostgres, AchievementRepositoryImpl, BrawlerPostgres>))
-        .route("/to-failed/{mission_id}", patch(to_failed::<MissionOperationPostgres, MissionViewingPostgres, AchievementRepositoryImpl, BrawlerPostgres>))
+        .route("/in-progress/:mission_id", patch(in_progress::<MissionOperationPostgres, MissionViewingPostgres, AchievementRepositoryImpl, BrawlerPostgres>))
+        .route("/to-completed/:mission_id", patch(to_completed::<MissionOperationPostgres, MissionViewingPostgres, AchievementRepositoryImpl, BrawlerPostgres>))
+        .route("/to-failed/:mission_id", patch(to_failed::<MissionOperationPostgres, MissionViewingPostgres, AchievementRepositoryImpl, BrawlerPostgres>))
         .layer(Extension(mission_message_repository))
         .route_layer(middleware::from_fn(auth))
         .with_state(Arc::new(user_case))

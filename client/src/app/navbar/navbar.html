@@ -6,6 +6,8 @@
     @if(display_name()){
     <button class="button" routerLink="/chief" routerLinkActive="active">My Missions</button>
     <!-- *เพิ่ม  -->
+    <button class="button" routerLink="/joined-missions" routerLinkActive="active">Joined Missions</button>
+    <!-- *เพิ่ม  -->
     <button class="button" routerLink="/mission-summary" routerLinkActive="active">Summary</button>
     <!-- *เพิ่ม  -->
     <button class="button" routerLink="/leaderboard" routerLinkActive="active">Leaderboard</button>
@@ -14,6 +16,10 @@
 
     <span class="spacer"></span>
     @if (display_name()) {
+    <button mat-icon-button routerLink="/notifications">
+        <mat-icon [matBadge]="invite_count()" [matBadgeHidden]="invite_count() === 0" matBadgeColor="warn">notifications</mat-icon>
+    </button>
+    
     <button matButton [matMenuTriggerFor]="menu">
         <img src="{{avatar_url()}}" alt="user avatar" class="avatar">
         {{display_name()}}

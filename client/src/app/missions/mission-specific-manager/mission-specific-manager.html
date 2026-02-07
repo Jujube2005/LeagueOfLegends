@@ -52,7 +52,11 @@
     </div>
 
     <div class="crew-section">
-        <h3>Crew Members ({{crew.length}})</h3>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3>Crew Members ({{crew.length}})</h3>
+            <button (click)="openInviteDialog()" *ngIf="isChief && mission.status !== 'Completed'">Invite
+                Member</button>
+        </div>
         <div class="crew-list">
             <div class="crew-item" *ngFor="let member of crew">
                 <div class="info">
@@ -63,7 +67,6 @@
                 <div class="actions"
                     *ngIf="mission.status !== 'Completed' && isChief && member.id !== mission.chief_id">
                     <button (click)="kick(member.id)" class="warn">Kick</button>
-                    <button (click)="makeChief(member.id)">Make Chief</button>
                 </div>
             </div>
             <div *ngIf="crew.length === 0" class="empty">No crew members yet.</div>

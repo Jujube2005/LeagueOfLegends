@@ -67,6 +67,17 @@ diesel::table! {
 }
 
 diesel::table! {
+    mission_invites (id) {
+        id -> Int4,
+        mission_id -> Int4,
+        user_id -> Int4,
+        #[max_length = 50]
+        status -> Varchar,
+        created_at -> Timestamp,
+    }
+}
+
+diesel::table! {
     missions (id) {
         id -> Int4,
         #[max_length = 255]
@@ -89,6 +100,8 @@ diesel::joinable!(crew_memberships -> brawlers (brawler_id));
 diesel::joinable!(crew_memberships -> missions (mission_id));
 diesel::joinable!(mission_messages -> brawlers (user_id));
 diesel::joinable!(mission_messages -> missions (mission_id));
+diesel::joinable!(mission_invites -> brawlers (user_id));
+diesel::joinable!(mission_invites -> missions (mission_id));
 diesel::joinable!(missions -> brawlers (chief_id));
 
 diesel::allow_tables_to_appear_in_same_query!(
@@ -96,6 +109,7 @@ diesel::allow_tables_to_appear_in_same_query!(
     brawler_achievements,
     brawlers,
     crew_memberships,
+    mission_invites,
     mission_messages,
     missions,
 );

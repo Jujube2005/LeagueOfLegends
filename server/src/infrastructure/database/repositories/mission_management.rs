@@ -52,36 +52,7 @@ impl MissionManagementRepository for MissionManagementPostgres {
         Ok(result)
     }
 
-    async fn transfer_ownership(&self, mission_id: i32, current_chief_id: i32, new_chief_id: i32) -> Result<()> {
-        let mut conn = Arc::clone(&self.db_pool).get()?;
 
-        conn.transaction::<_, anyhow::Error, _>(|conn| {
-            // 1. Remove new chief from crew if present
-            delete(crew_memberships::table)
-                .filter(crew_memberships::mission_id.eq(mission_id))
-                .filter(crew_memberships::brawler_id.eq(new_chief_id))
-                .execute(conn)?;
-
-            // 2. Add current chief to crew
-            insert_into(crew_memberships::table)
-                .values((
-                    crew_memberships::mission_id.eq(mission_id),
-                    crew_memberships::brawler_id.eq(current_chief_id),
-                ))
-                .execute(conn)?;
-
-            // 3. Update mission chief
-            update(missions::table)
-                .filter(missions::id.eq(mission_id))
-                .filter(missions::chief_id.eq(current_chief_id))
-                .set(missions::chief_id.eq(new_chief_id))
-                .execute(conn)?;
-
-            Ok(())
-        })?;
-
-        Ok(())
-    }
 
     async fn remove(&self, mission_id: i32, chief_id: i32) -> Result<()> {
         let mut conn = Arc::clone(&self.db_pool).get()?;

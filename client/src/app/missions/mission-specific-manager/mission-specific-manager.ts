@@ -6,6 +6,8 @@ import { CommonModule, Location } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import { PassportService } from '../../_services/passport-service'
 import { MissionChatComponent } from '../../_components/mission-chat/mission-chat'
+import { MatDialog } from '@angular/material/dialog'
+import { InviteMemberComponent } from '../../_dialogs/invite-member/invite-member'
 
 @Component({
   selector: 'app-mission-specific-manager',
@@ -21,6 +23,7 @@ export class MissionSpecificManager implements OnInit {
   private _location = inject(Location)
   private _cdr = inject(ChangeDetectorRef)
   private _passport = inject(PassportService)
+  private _dialog = inject(MatDialog)
   private _loadingTimer: any = null
 
   missionId: number = 0
@@ -54,7 +57,7 @@ export class MissionSpecificManager implements OnInit {
     this._loadingTimer = setTimeout(() => {
       if (this.isLoading) {
         console.warn('Loading timeout triggered')
-        this.error = 'การเชื่อมต่อช้าผิดปกติ โปรดลองใหม่อีกครั้ง'
+        this.error = 'The connection was faulty. Please try again.'
         this.isLoading = false
         this._cdr.detectChanges()
       }
@@ -146,22 +149,14 @@ export class MissionSpecificManager implements OnInit {
     if (!confirm('Kick this member?')) return
     try {
       await this._missionService.kickCrew(this.missionId, memberId)
+      alert('Member kicked successfully')
       await this.loadData()
     } catch (e: any) {
       alert(e?.error?.message || 'Failed to kick')
     }
   }
 
-  async makeChief(memberId: number) {
-    if (!confirm('Transfer ownership to this member? You will become a crew member.')) return
-    try {
-      await this._missionService.transferOwnership(this.missionId, memberId)
-      alert('Ownership transferred')
-      this._router.navigate(['/chief'])
-    } catch (e: any) {
-      alert(e?.error?.message || 'Failed')
-    }
-  }
+
 
   async leaveMission() {
     if (!confirm('Are you sure you want to leave this mission?')) return
@@ -171,6 +166,16 @@ export class MissionSpecificManager implements OnInit {
     } catch (e: any) {
       alert(e?.error?.message || 'Leave failed')
     }
+  }
+
+  openInviteDialog() {
+    this._dialog.open(InviteMemberComponent, {
+      width: '400px',
+      data: {
+        missionId: this.missionId,
+        currentMembers: this.crew.map(c => c.id).concat(this.mission?.chief_id)
+      }
+    })
   }
 }
 

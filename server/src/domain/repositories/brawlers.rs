@@ -11,7 +11,7 @@ use anyhow::Result;
 use async_trait::async_trait;
 
 #[async_trait]
-pub trait BrawlerRepository {
+pub trait BrawlerRepository: Send + Sync {
     async fn register(&self, register_brawler_entity: RegisterBrawlerEntity) -> Result<Passport>;
     async fn find_by_username(&self, username: String) -> Result<BrawlerEntity>;
     async fn find_by_id(&self, id: i32) -> Result<BrawlerEntity>;
@@ -30,4 +30,5 @@ pub trait BrawlerRepository {
     async fn crew_counting(&self, mission_id: i32) -> Result<u32>;
     // *เพิ่ม
     async fn get_leaderboard(&self) -> Result<Vec<BrawlerModel>>;
+    async fn get_all_brawlers(&self) -> Result<Vec<BrawlerModel>>;
 }

@@ -11,3 +11,5 @@ pub mod mission_message_repository;
 pub use brawlers::BrawlerRepository;
 pub use achievements::AchievementRepository;
 pub use mission_message_repository::MissionMessageRepository;
+pub mod mission_invites;
+pub use mission_invites::MissionInviteRepository;

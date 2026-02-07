@@ -31,6 +31,11 @@ export const routes: Routes = [
     // *้เพิ่ม
     { path: 'leaderboard', component: LeaderboardComponent, canActivate: [authGuard], runGuardsAndResolvers: 'always' },
     {
+        path: 'notifications',
+        loadComponent: () => import('./notifications/notifications').then(m => m.NotificationsComponent),
+        canActivate: [authGuard]
+    },
+    {
         path: 'chief',
         component: MissionManager,
         runGuardsAndResolvers: 'always',

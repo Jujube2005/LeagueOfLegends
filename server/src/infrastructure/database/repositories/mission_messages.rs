@@ -5,13 +5,13 @@ use diesel::prelude::*;
 
 use crate::{
     domain::{
-        entities::mission_messages::NewMissionMessageEntity,
+        entities::mission_messages::{MissionMessageEntity, NewMissionMessageEntity},
         repositories::mission_message_repository::MissionMessageRepository,
         value_objects::mission_message_model::MissionMessageModel,
     },
     infrastructure::database::{
         postgresql_connection::PgPoolSquad,
-        schema::{mission_messages, brawlers},
+        schema::{brawlers, mission_messages},
     },
 };
 
@@ -27,14 +27,16 @@ impl MissionMessagePostgres {
 
 #[async_trait]
 impl MissionMessageRepository for MissionMessagePostgres {
-    async fn create(&self, entity: NewMissionMessageEntity) -> Result<()> {
+    async fn create(&self, entity: NewMissionMessageEntity) -> Result<MissionMessageEntity> {
+        use crate::domain::entities::mission_messages::MissionMessageEntity;
+
         let mut conn = Arc::clone(&self.db_pool).get()?;
         
-        diesel::insert_into(mission_messages::table)
+        let result = diesel::insert_into(mission_messages::table)
             .values(&entity)
-            .execute(&mut conn)?;
+            .get_result::<MissionMessageEntity>(&mut conn)?;
             
-        Ok(())
+        Ok(result)
     }
 
     async fn get_by_mission_id(&self, mission_id_val: i32) -> Result<Vec<MissionMessageModel>> {

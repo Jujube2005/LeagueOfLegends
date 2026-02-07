@@ -115,6 +115,7 @@ export class MissionChatComponent implements OnInit, OnChanges, OnDestroy {
 
     this.socketSub = this.missionSocket.messages$.subscribe((msg: MissionMessage) => {
       this.messages.push(msg)
+      this.cdr.detectChanges()
       this.scrollToBottom()
     })
   }

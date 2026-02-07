@@ -1,0 +1,40 @@
+<div class="notifications-container">
+    <div class="header">
+        <h1>Notifications</h1>
+    </div>
+
+    @if (invites().length === 0) {
+    <div class="empty-state">
+        <mat-icon class="empty-icon">notifications_off</mat-icon>
+        <p>No new notifications at the moment.</p>
+    </div>
+    } @else {
+    <div class="invites-list">
+        @for (invite of invites(); track invite.id) {
+        <mat-card class="invite-card">
+            <mat-card-header>
+                <div mat-card-avatar class="invite-avatar">
+                    <mat-icon>mail</mat-icon>
+                </div>
+                <mat-card-title>Mission Invitation</mat-card-title>
+                <mat-card-subtitle>From {{invite.chief_name}}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+                <p>
+                    You have been invited to join the mission <strong>{{invite.mission_name}}</strong>.
+                </p>
+            </mat-card-content>
+            <mat-card-actions align="end">
+                <button mat-button color="warn" (click)="decline(invite.id)" [disabled]="isProcessing(invite.id)">
+                    @if (isProcessing(invite.id)) { Processing... } @else { Decline }
+                </button>
+                <button mat-raised-button color="primary" (click)="accept(invite.id)"
+                    [disabled]="isProcessing(invite.id)">
+                    @if (isProcessing(invite.id)) { Joining... } @else { Accept }
+                </button>
+            </mat-card-actions>
+        </mat-card>
+        }
+    </div>
+    }
+</div>
