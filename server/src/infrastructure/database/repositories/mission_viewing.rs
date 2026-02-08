@@ -9,7 +9,7 @@ use crate::{
         value_objects::{
             brawler_model::BrawlerModel,
             mission_filter::MissionFilter,
-            mission_model::MissionModel,
+            MissionModel,
         },
     },
     infrastructure::database::postgresql_connection::PgPoolSquad,
@@ -129,12 +129,12 @@ LEFT JOIN crew_memberships cm ON cm.mission_id = m.id
 WHERE ($1::varchar IS NULL OR m.status = $1)
   AND ($2::varchar IS NULL OR m.name ILIKE $2)
   AND ($4::varchar IS NULL OR m.category = $4)
-  AND m.chief_id <> $3
-  AND NOT EXISTS (
-    SELECT 1 FROM crew_memberships cm3
-    WHERE cm3.mission_id = m.id
-      AND cm3.brawler_id = $3
-  )
+  -- AND m.chief_id <> $3
+  -- AND NOT EXISTS (
+  --  SELECT 1 FROM crew_memberships cm3
+  --  WHERE cm3.mission_id = m.id
+  --    AND cm3.brawler_id = $3
+  -- )
 GROUP BY
     m.id, b.display_name, m.name, m.description, m.category, m.max_crew,
     m.status, m.chief_id, m.created_at, m.updated_at
@@ -213,6 +213,7 @@ ORDER BY m.created_at DESC
 SELECT 
     b.id,
     b.display_name,
+    b.tagline,
     COALESCE(b.avatar_url, '') AS avatar_url,
     (
         (SELECT COUNT(cm_s.mission_id)::INTEGER 

@@ -1,78 +1,230 @@
-<div class="login-container">
+<div
+    class="login-page text-gray-100 font-sans selection:bg-primary/30 min-h-screen flex flex-col items-center justify-center p-6 bg-[#110724] overflow-hidden relative">
 
-    <mat-card class="example-card" appearance="outlined">
-        <mat-card-header>
-            <mat-card-title>
-                <h3>{{mode.toLocaleUpperCase()}}</h3>
-            </mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-            <form (ngSubmit)="onSubmit()" [formGroup]="form" autocomplete="off">
-                <!-- Username -->
-                <mat-form-field appearance="outline">
-                    <mat-label>Username</mat-label>
-                    <input matInput type="text" (input)="updateErrorMsg('username')" formControlName="username"
-                        placeholder="type your username here">
-                    @if (form.controls['username'].invalid) {
-                    <mat-error>{{errorMsg.username()}}</mat-error>
+    <!-- Dynamic Background Patterns -->
+    <div class="grid-pattern"></div>
+    <div class="scanning-line"></div>
+
+    <!-- Twinkling Stars -->
+    <div class="stars-container">
+        <div class="stars"></div>
+        <div class="stars2"></div>
+    </div>
+
+    <!-- Cosmic Background Layers -->
+    <div class="nebula-container">
+        <div class="nebula-1"></div>
+        <div class="nebula-2"></div>
+    </div>
+    <div class="light-beam"></div>
+
+    <!-- Parallax Background Pattern -->
+    <div class="yokai-bg-pattern"></div>
+
+    <!-- Particles -->
+    <div class="particle w-1 h-1" style="left: 10%; top: 80%; animation-delay: 0s;"></div>
+    <div class="particle w-2 h-2" style="left: 25%; top: 90%; animation-delay: 5s;"></div>
+    <div class="particle w-1 h-1" style="left: 60%; top: 75%; animation-delay: 2s;"></div>
+    <div class="particle w-1.5 h-1.5" style="left: 85%; top: 85%; animation-delay: 8s;"></div>
+
+    <!-- Decorative Floating Elements -->
+    <span class="material-symbols-outlined floating-icon text-5xl top-20 left-[10%] opacity-20 animate-bobbing"
+        style="animation-delay: -1s;">swords</span>
+    <span class="material-symbols-outlined floating-icon text-4xl bottom-40 left-[15%] opacity-10 animate-bobbing"
+        style="animation-delay: -3s;">shield</span>
+    <span class="material-symbols-outlined floating-icon text-6xl top-40 right-[12%] opacity-15 animate-bobbing"
+        style="animation-delay: -2s;">star</span>
+    <span class="material-symbols-outlined floating-icon text-3xl bottom-20 right-[20%] opacity-20 animate-bobbing"
+        style="animation-delay: -4s;">local_fire_department</span>
+
+    <!-- Logo Section -->
+    <div class="flex flex-col items-center mb-6 animate-bobbing">
+        <div class="relative w-20 h-20 mb-4 flex items-center justify-center">
+            <!-- Rotating Orbital Ring -->
+            <div class="absolute inset-0 border-2 border-dashed border-primary/30 rounded-full rotate-slow"></div>
+            <div class="absolute inset-1 border border-primary/20 rounded-full"></div>
+
+            <div
+                class="relative w-16 h-16 flex items-center justify-center bg-primary/20 border border-primary/40 rounded-xl hover:scale-110 transition duration-300 shadow-[0_0_20px_rgba(234,179,8,0.3)]">
+                <span class="material-symbols-outlined text-primary text-3xl">auto_awesome</span>
+            </div>
+        </div>
+        <h1
+            class="font-display text-4xl font-bold tracking-[0.3em] text-primary drop-shadow-[0_0_15px_rgba(234,179,8,0.5)]">
+            ASTRA
+        </h1>
+    </div>
+
+    <!-- Main Portal Card -->
+    <div class="w-full max-w-md relative mt-4 animate-soft-float">
+        <!-- Corner Accents (Smoothed) -->
+        <div class="absolute -top-2 -left-2 w-10 h-10 border-t-2 border-l-2 border-border-gold/50 rounded-tl-3xl z-20">
+        </div>
+        <div class="absolute -top-2 -right-2 w-10 h-10 border-t-2 border-r-2 border-border-gold/50 rounded-tr-3xl z-20">
+        </div>
+        <div
+            class="absolute -bottom-2 -left-2 w-10 h-10 border-b-2 border-l-2 border-border-gold/50 rounded-bl-3xl z-20">
+        </div>
+        <div
+            class="absolute -bottom-2 -right-2 w-10 h-10 border-b-2 border-r-2 border-border-gold/50 rounded-br-3xl z-20">
+        </div>
+
+        <!-- Background Ambient Glow -->
+        <div class="ambient-glow"></div>
+
+        <div
+            class="bg-surface-dark border border-white/10 p-10 rounded-[2.5rem] shadow-[0_30px_60px_rgba(0,0,0,0.6)] relative z-10 overflow-hidden">
+            <!-- Glass Highlight Line -->
+            <div
+                class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent">
+            </div>
+
+            <div class="text-center mb-10">
+                <h2 class="font-display text-2xl text-white mb-2 tracking-widest">
+                    {{ mode === 'login' ? 'INITIALIZE ACCESS' : 'CREATE OPERATOR' }}
+                </h2>
+                <p class="text-gray-400 text-sm italic font-medium">
+                    "{{ mode === 'login'
+                    ? 'Authenticate to continue.'
+                    : 'Register a new brawler to enter Astra.' }}"
+                </p>
+            </div>
+
+            <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-6">
+                <!-- Username-->
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-border-gold mb-2 ml-1"
+                        for="username">Username</label>
+                    <div class="relative">
+                        <span
+                            class="material-icons-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">person</span>
+                        <input formControlName="username" (input)="updateErrorMsg('username')"
+                            class="w-full bg-black/30 border border-white/10 rounded px-10 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-primary transition-colors text-sm"
+                            id="username" placeholder="NAME1234" type="text" />
+                    </div>
+                    @if (form.controls['username'].invalid && form.controls['username'].touched) {
+                    <p class="text-[10px] text-red-400 mt-1 ml-1 uppercase font-bold tracking-widest">
+                        {{errorMsg.username()}}</p>
                     }
-                </mat-form-field>
-
-                <!-- Password -->
-                <mat-form-field appearance="outline">
-                    <mat-label>Password</mat-label>
-                    <input matInput type="password" (input)="updateErrorMsg('password')" formControlName="password"
-                        placeholder="type your password here">
-                    @if (form.controls['password'].invalid) {
-                    <mat-error>{{errorMsg.password()}}</mat-error>
-                    }
-                </mat-form-field>
-
-                @if (mode !== 'login') {
-                <!-- Confirm Password -->
-                <mat-form-field appearance="outline">
-                    <mat-label>Confirm Password</mat-label>
-                    <input matInput type="password" (input)="updateErrorMsg('cf_password')"
-                        formControlName="cf_password" placeholder="type your password here">
-                    @if (form.controls['cf_password'].invalid) {
-                    <mat-error>{{errorMsg.cf_password()}}</mat-error>
-                    }
-                </mat-form-field>
-
-                <!-- Display name -->
-                <mat-form-field appearance="outline">
-                    <mat-label>Aka</mat-label>
-                    <input matInput type="text" (input)="updateErrorMsg('displayname')" formControlName="display_name"
-                        placeholder="type your aka here">
-                    @if (form.controls['display_name'].invalid) {
-                    <mat-error>{{errorMsg.displayname()}}</mat-error>
-                    }
-                </mat-form-field>
-                }
-
-                <div class="actions">
-                    <button (click)="onSubmit()" type="submit" class="blue" matButton="outlined" [disabled]="!form.valid">
-                        @if(mode==='login'){
-                        Login
-                        }
-                        @if(mode!=='login'){
-                        Get Start
-                        }
-                    </button>
                 </div>
 
-                @if (errorMsg.server() !== '') {
-                <span class="error">{{errorMsg.server()}}</span>
+                @if (mode !== 'login') {
+                <!-- Aka / Display Name (Register Mode) -->
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-border-gold mb-2 ml-1"
+                        for="display_name">Aka (Display Name)</label>
+                    <div class="relative">
+                        <span
+                            class="material-icons-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">badge</span>
+                        <input formControlName="display_name" (input)="updateErrorMsg('display_name')"
+                            class="w-full bg-black/30 border border-white/10 rounded px-10 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-primary transition-colors text-sm"
+                            id="display_name" placeholder="Legendary Samurai" type="text" />
+                    </div>
+                    @if (form.controls['display_name']?.invalid && form.controls['display_name']?.touched) {
+                    <p class="text-[10px] text-red-400 mt-1 ml-1 uppercase font-bold tracking-widest">
+                        {{errorMsg.displayname()}}</p>
+                    }
+                </div>
                 }
-            </form>
-            <div class="login-spacer">or</div>
-            @if (mode === 'login') {
-            <div class="toggle">New to Brawler? <span (click)="toggleMode()">Sign Up</span></div>
-            }
-            @if (mode !== 'login') {
-            <div class="toggle">Already have an account? <span (click)="toggleMode()">Sign In</span></div>
-            }
-        </mat-card-content>
 
-    </mat-card>
+                <!-- Password-->
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-border-gold mb-2 ml-1"
+                        for="password">Password</label>
+                    <div class="relative">
+                        <span
+                            class="material-icons-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">lock</span>
+                        <input formControlName="password" (input)="updateErrorMsg('password')"
+                            class="w-full bg-black/30 border border-white/10 rounded px-10 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-primary transition-colors text-sm"
+                            id="password" placeholder="••••••••" [type]="showPassword() ? 'text' : 'password'" />
+                        <button type="button" (click)="showPassword.set(!showPassword())"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-primary transition-colors focus:outline-none">
+                            <span class="material-symbols-outlined text-sm">
+                                {{ showPassword() ? 'visibility' : 'visibility_off' }}
+                            </span>
+                        </button>
+                    </div>
+                    @if (form.controls['password'].invalid && form.controls['password'].touched) {
+                    <p class="text-[10px] text-red-400 mt-1 ml-1 uppercase font-bold tracking-widest">
+                        {{errorMsg.password()}}</p>
+                    }
+                </div>
+
+                @if (mode !== 'login') {
+                <!-- Confirm Password (Register Mode) -->
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-border-gold mb-2 ml-1"
+                        for="cf_password">Confirm Password</label>
+                    <div class="relative">
+                        <span
+                            class="material-icons-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">verified_user</span>
+                        <input formControlName="cf_password" (input)="updateErrorMsg('cf_password')"
+                            class="w-full bg-black/30 border border-white/10 rounded px-10 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-primary transition-colors text-sm"
+                            id="cf_password" placeholder="••••••••"
+                            [type]="showConfirmPassword() ? 'text' : 'password'" />
+                        <button type="button" (click)="showConfirmPassword.set(!showConfirmPassword())"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-primary transition-colors focus:outline-none">
+                            <span class="material-symbols-outlined text-sm">
+                                {{ showConfirmPassword() ? 'visibility' : 'visibility_off' }}
+                            </span>
+                        </button>
+                    </div>
+                    @if (form.controls['cf_password']?.invalid && form.controls['cf_password']?.touched) {
+                    <p class="text-[10px] text-red-400 mt-1 ml-1 uppercase font-bold tracking-widest">
+                        {{errorMsg.cf_password()}}</p>
+                    }
+                </div>
+                }
+
+                @if (errorMsg.server() !== '') {
+                <div class="bg-red-500/10 border border-red-500/50 p-3 rounded text-center">
+                    <p class="text-[10px] text-red-400 uppercase font-bold tracking-widest">{{errorMsg.server()}}</p>
+                </div>
+                }
+
+                <div class="pt-4">
+                    <button type="submit" [disabled]="!form.valid"
+                        class="w-full group relative overflow-hidden bg-primary text-black font-display font-black py-4 rounded transition-all hover:scale-[1.02] active:scale-95 shadow-lg shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100">
+                        <span class="relative z-10 tracking-[0.2em] text-lg uppercase">
+                            {{ mode === 'login' ? 'ENTER ASTRA' : 'CREATE ACCOUNT' }}
+                        </span>
+                        <div
+                            class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                        </div>
+                    </button>
+                </div>
+            </form>
+
+            <div class="mt-8 flex items-center justify-between">
+                <div class="h-[1px] bg-white/10 flex-grow"></div>
+                <span class="px-4 text-[10px] text-gray-500 uppercase tracking-widest font-bold">
+                    {{ mode === 'login' ? 'New Brawler?' : 'Already Registered?' }}
+                </span>
+                <div class="h-[1px] bg-white/10 flex-grow"></div>
+            </div>
+
+            <div class="mt-6">
+                <button (click)="toggleMode()"
+                    class="w-full border border-accent-purple/50 text-accent-purple py-3 rounded text-sm font-semibold hover:bg-accent-purple/10 transition-all uppercase tracking-widest flex items-center justify-center gap-2">
+                    <span class="material-icons-outlined text-sm">
+                        {{ mode === 'login' ? 'person_add' : 'login' }}
+                    </span>
+                    {{ mode === 'login' ? 'Create Account' : 'Sign In' }}
+                </button>
+            </div>
+        </div>
+        <div
+            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-accent-purple/10 blur-[100px] -z-10 rounded-full pointer-events-none">
+        </div>
+    </div>
+
+    <!-- Footer Links -->
+    <div
+        class="mt-12 flex flex-wrap justify-center gap-8 text-[10px] uppercase tracking-[0.2em] font-bold text-gray-500">
+        <a class="hover:text-primary transition-colors" href="#">Server Status: <span
+                class="text-green-500">ONLINE</span></a>
+        <a class="hover:text-primary transition-colors" href="#">Project Version 2.0.4</a>
+        <a class="hover:text-primary transition-colors" href="#">About</a>
+    </div>
+
 </div>

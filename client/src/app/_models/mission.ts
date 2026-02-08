@@ -11,4 +11,9 @@ export interface Mission {
     created_at: Date
     updated_at: Date
     is_member?: boolean //*เพิ่ม
+    image_url?: string
+    difficulty?: string
+    duration?: string
+    location?: string
+    min_level?: number
 }

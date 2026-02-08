@@ -14,20 +14,30 @@ export class PassportService {
   private _base_url = environment.baseUrl + '/api'
   private _http = inject(HttpClient)
 
-  data = signal<undefined | Passport>(undefined)
+  data = signal<Passport | undefined>(undefined)
   avatar = signal<string>("")
-  
+
   // *เพิ่ม
   userId = computed(() => {
-    const token = this.data()?.token
-    if (!token) return undefined
+    const passport = this.data()
+    if (!passport?.token) return undefined
     try {
-      const payload = JSON.parse(atob(token.split('.')[1]))
+      const payload = JSON.parse(atob(passport.token.split('.')[1]))
+      // Check if sub is a number or string that needs parsing
       return Number(payload.sub)
     } catch {
       return undefined
     }
   })
+
+  // Computed Stats
+  xp = computed(() => {
+    const p = this.data();
+    if (!p) return 0;
+    return (p.mission_success_count || 0) * 500 + (p.mission_join_count || 0) * 100;
+  });
+
+  level = computed(() => Math.floor(this.xp() / 1000) + 1);
 
   saveAvatarImgUrl(url: string) {
     let passport = this.data()
@@ -45,6 +55,8 @@ export class PassportService {
     try {
       const passport = JSON.parse(jsonString) as Passport
       this.data.set(passport)
+
+      // Ensure avatar signal is synced with loaded data
       const avatar = getAvatarUrl(passport)
       this.avatar.set(avatar)
     } catch (error) {
@@ -93,9 +105,16 @@ export class PassportService {
 
   private async fetchPassport(api_url: string, model: LoginModel | RegisterModel): Promise<string | null> {
     try {
+      // Use "any" to handle potential backend response structure mismatches safely
       const result = this._http.post<Passport>(api_url, model)
       const passport = await firstValueFrom(result)
+
       this.data.set(passport)
+
+      // Update avatar signal immediately
+      const avatar = getAvatarUrl(passport)
+      this.avatar.set(avatar)
+
       this.savePassportToLocalStorage()
       return null
     } catch (error: any) {

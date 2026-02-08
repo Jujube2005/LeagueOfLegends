@@ -6,6 +6,7 @@ import { fileToBase64 } from '../_helpers/file'
 import { firstValueFrom } from 'rxjs'
 import { CloudinaryImage } from '../_models/cludinary-image'
 import { Brawler } from '../_models/brawler'
+import { Passport } from '../_models/passport'
 
 @Injectable({
   providedIn: 'root',
@@ -31,6 +32,18 @@ export class UserService {
     return null
   }
 
+  async updateProfile(display_name: string, tagline: string): Promise<string | null> {
+    const url = this._base_url + '/profile'
+    try {
+      const newPassport = await firstValueFrom(this._http.put<Passport>(url, { display_name, tagline }))
+      this._passport.data.set(newPassport)
+      localStorage.setItem('passport', JSON.stringify(newPassport))
+      return null
+    } catch (error: any) {
+      return error.error as string
+    }
+  }
+
   // *เพิ่ม
   async getLeaderboard(): Promise<Brawler[]> {
     const url = this._base_url + '/leaderboard'
@@ -40,5 +53,11 @@ export class UserService {
   async getAllBrawlers(): Promise<Brawler[]> {
     const url = this._base_url + '/all'
     return await firstValueFrom(this._http.get<Brawler[]>(url))
+  }
+
+  // *เพิ่ม
+  async getMyMissions(): Promise<import('../_models/mission').Mission[]> { // using importtype or Mission if imported
+    const url = this._base_url + '/my-missions'
+    return await firstValueFrom(this._http.get<import('../_models/mission').Mission[]>(url))
   }
 }

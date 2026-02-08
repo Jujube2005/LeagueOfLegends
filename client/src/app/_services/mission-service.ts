@@ -21,7 +21,7 @@ export class MissionService {
 
   async getByFilter(filter: MissionFilter): Promise<Mission[]> {
     const queryString = this.createQueryString(filter)
-    const url = this._base_url + '/view/filter?' + queryString
+    const url = this._base_url + '/view/filter' + (queryString ? '?' + queryString : '')
     const missions = await firstValueFrom(this._http.get<Mission[]>(url))
     return missions
   }

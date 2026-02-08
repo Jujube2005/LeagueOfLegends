@@ -1,0 +1,2 @@
+ALTER TABLE brawlers ADD COLUMN mission_success_count INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE brawlers ADD COLUMN mission_join_count INTEGER NOT NULL DEFAULT 0;

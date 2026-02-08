@@ -1,1 +1,331 @@
-<p>home works!</p>
+<div
+    class="home-page text-slate-900 dark:text-slate-100 min-h-screen transition-colors duration-300 pt-24 tech-grid-bg">
+    <main class="max-w-7xl mx-auto px-6 py-8 space-y-20">
+
+        <!-- HERO -->
+        <!-- HERO -->
+        <section
+            class="relative overflow-hidden rounded-3xl glass-panel border border-purple-500/20 shadow-2xl tech-float">
+
+            <div
+                class="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1614728263952-84ea206f99b6?auto=format&fit=crop&q=80&w=2000')] bg-cover bg-center">
+            </div>
+
+            <div class="absolute inset-0 bg-gradient-to-r from-background-dark via-background-dark/80 to-transparent">
+            </div>
+
+            <div class="relative grid md:grid-cols-2 gap-12 p-12 items-center">
+                <div class="space-y-6">
+
+                    <div
+                        class="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 border border-primary/30 text-primary text-[10px] uppercase font-bold tracking-widest">
+                        Season 1: Astra Begins
+                    </div>
+
+                    <h2 class="font-display text-5xl md:text-6xl font-black text-white leading-tight">
+                        ASTRA:<br />MISSION CONTROL
+                    </h2>
+
+                    <p class="text-slate-400 max-w-lg leading-relaxed">
+                        Coordinate missions with your crew, complete objectives, and earn rewards through Astra’s
+                        unified mission control system.
+                    </p>
+
+                    <div class="flex flex-wrap gap-4 pt-4">
+                        <button routerLink="/missions"
+                            class="bg-primary hover:bg-primary/90 text-white px-8 py-4 rounded-lg font-bold uppercase tracking-widest text-sm transition-all transform hover:scale-105 shadow-lg shadow-primary/20 glow-primary">
+                            Browse Missions
+                        </button>
+
+                        <button routerLink="/joined-missions"
+                            class="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-8 py-4 rounded-lg font-bold uppercase tracking-widest text-sm transition-all backdrop-blur-sm">
+                            My Missions
+                        </button>
+                    </div>
+                </div>
+
+                <!-- right cards -->
+                <div class="hidden md:flex gap-6 justify-end pt-10">
+                    <div [appThreeDTilt]="20"
+                        class="relative w-64 aspect-[3/4] ornate-border rounded-xl overflow-hidden card-glare-effect holographic-foil shadow-xl glow-primary transform-3d">
+                        <div class="w-64 aspect-[3/4]">
+                            <img class="w-full h-full object-cover" src="/assets/card/card-img-01.jpg" />
+                        </div>
+                        <div class="mission-card-gradient flex flex-col justify-end p-6 transform-3d">
+                            <h4 class="font-display text-white text-xl font-black translate-z-50 neon-text-purple">
+                                STRIKE OPERATIVE</h4>
+                            <p class="text-[10px] text-primary font-bold translate-z-100 uppercase tracking-widest">
+                                ELITE UNIT</p>
+                        </div>
+                    </div>
+
+                    <div [appThreeDTilt]="30"
+                        class="relative w-64 aspect-[3/4] ornate-border rounded-xl overflow-hidden card-glare-effect holographic-foil shadow-2xl glow-primary transform-3d">
+                        <div class="w-64 aspect-[3/4]">
+                            <img class="w-full h-full object-cover" src="/assets/card/card-img-02.jpg" />
+                        </div>
+                        <div class="mission-card-gradient flex flex-col justify-end p-6 transform-3d">
+                            <h4 class="font-display text-white text-xl font-black translate-z-50 neon-text-purple">SCOUT
+                                UNIT</h4>
+                            <p class="text-[10px] text-primary font-bold translate-z-100 uppercase tracking-widest">RARE
+                                FIND</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- MISSIONS -->
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+
+            <div class="lg:col-span-2 space-y-8">
+                <h3
+                    class="font-display text-xs font-bold text-primary tracking-[0.3em] uppercase border-b border-primary/20 pb-2">
+                    Filters</h3>
+            </div>
+
+            <div class="lg:col-span-10 space-y-8">
+
+                <div class="flex items-center justify-between">
+                    <h2 class="font-display text-2xl font-bold tracking-widest text-slate-100 uppercase">
+                        Active Missions
+                    </h2>
+                    <div class="h-px flex-1 mx-8 bg-purple-900/30"></div>
+                </div>
+
+                <div class="mission-deck">
+                    @for (mission of missions(); track mission.id; let i = $index; let total = $count) {
+                    <div class="mission-card-stacked" [style.--index]="i" [style.--total]="total"
+                        [style.--z-index]="total - i">
+
+                        <div class="tilt-wrapper card-glare-effect" [appThreeDTilt]="50">
+                            <div class="mission-card-flip">
+
+                                <!-- FRONT: LOCKED CARD DESIGN -->
+                                <div class="card-front astra-card">
+                                    <div class="astra-frame">
+                                        <div class="astra-inner tech-corners">
+                                            <div class="astra-lock">
+                                                <span class="material-symbols-outlined">lock</span>
+                                            </div>
+                                            <h4 class="neon-text-purple tracking-[0.4em]">LOCKED</h4>
+                                            <p class="text-[10px] opacity-50 tracking-[0.2em] uppercase">Encrypted Data
+                                            </p>
+                                            <button class="claim-btn">DECRYPT</button>
+                                        </div>
+                                    </div>
+                                    <!-- Scan line for front -->
+                                    <div class="card-back-decoration">
+                                        <div class="scan-line"></div>
+                                    </div>
+                                </div>
+
+                                <!-- BACK: OPENED STATE -->
+                                <div class="card-back">
+                                    <div class="relative w-full h-full bg-[#140c2e] flex flex-col p-4 shadow-inner">
+
+                                        <!-- Decorative Elements -->
+                                        <div class="card-back-decoration">
+                                            <div class="scan-line"></div>
+                                        </div>
+
+                                        <div
+                                            class="absolute inset-2 border-2 border-[#6b4eff]/30 rounded-xl pointer-events-none">
+                                        </div>
+                                        <div
+                                            class="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-primary/60 rounded-tl-2xl">
+                                        </div>
+                                        <div
+                                            class="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-primary/60 rounded-br-2xl">
+                                        </div>
+
+                                        <!-- Image Container -->
+                                        <div
+                                            class="relative h-3/5 rounded-lg overflow-hidden border border-white/10 group-hover:border-primary/40 transition-colors holographic-sheen">
+                                            <img [src]="mission.randomImage || getMissionImage(mission)"
+                                                [alt]="mission.name" class="w-full h-full object-cover">
+                                            <div
+                                                class="absolute inset-0 bg-gradient-to-t from-[#140c2e] via-transparent to-transparent">
+                                            </div>
+
+                                            <!-- Mini Status Badge -->
+                                            <div
+                                                class="absolute top-2 left-2 px-2 py-0.5 bg-primary/20 backdrop-blur-md rounded border border-primary/30 text-[8px] font-bold text-primary uppercase">
+                                                {{mission.category || 'OPERATION'}}
+                                            </div>
+                                        </div>
+
+                                        <!-- Content Section -->
+                                        <div
+                                            class="flex-1 flex flex-col items-center justify-center text-center px-2 py-4 gap-1">
+                                            <div
+                                                class="text-[8px] text-primary font-bold tracking-[0.3em] uppercase opacity-60">
+                                                MISSION DATA</div>
+                                            <h4
+                                                class="font-display text-white text-lg font-black tracking-widest uppercase leading-tight translate-z-40">
+                                                {{mission.name}}
+                                            </h4>
+
+                                            <!-- Dynamic Stats -->
+                                            <div class="data-stats translate-z-20">
+                                                <div class="stat-item">
+                                                    <span class="material-symbols-outlined !text-[12px]">group</span>
+                                                    <div class="val">{{mission.crew_count}}/{{mission.max_crew || 5}}
+                                                    </div>
+                                                </div>
+                                                <div class="stat-item">
+                                                    <span class="material-symbols-outlined !text-[12px]">verified</span>
+                                                    <div class="val">{{mission.status}}</div>
+                                                </div>
+                                            </div>
+
+                                            <p
+                                                class="mt-2 text-[9px] text-slate-400 font-medium leading-relaxed line-clamp-2 px-4 translate-z-20">
+                                                {{mission.description || 'Access restricted. Complete priority
+                                                objectives to sync data.'}}
+                                            </p>
+
+                                            <!-- Action Button -->
+                                            @if (mission.status.toUpperCase() === 'COMPLETED') {
+                                            <div (click)="$event.stopPropagation()"
+                                                class="mt-auto w-4/5 py-3 bg-slate-800/50 border border-white/10 text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] rounded-lg cursor-not-allowed">
+                                                SUCCESS
+                                            </div>
+                                            } @else if (mission.chief_id === _passport.userId() || mission.is_member) {
+                                            <button
+                                                (click)="$event.stopPropagation(); _router.navigate(['/missions', mission.id])"
+                                                class="mt-auto w-4/5 py-3 bg-primary hover:bg-primary/90 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-lg shadow-[0_5px_15px_rgba(124,58,237,0.3)] transition-all transform active:scale-95 translate-z-60">
+                                                VIEW MISSION
+                                            </button>
+                                            } @else {
+                                            <button (click)="$event.stopPropagation(); joinMission(mission.id)"
+                                                class="mt-auto w-4/5 py-3 bg-[#65a30d] hover:bg-[#84cc16] text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-lg shadow-[0_5px_15px_rgba(101,163,13,0.3)] transition-all transform active:scale-95 translate-z-60">
+                                                ENGAGE MISSION
+                                            </button>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    } @empty {
+                    <div
+                        class="col-span-full py-20 text-center border-2 border-dashed border-white/5 rounded-3xl w-full">
+                        <span class="material-symbols-outlined text-5xl text-slate-700 mb-4">explore_off</span>
+                        <p class="text-slate-500 uppercase tracking-widest">
+                            No active missions available.
+                        </p>
+                    </div>
+                    }
+                </div>
+            </div>
+        </section>
+
+        <!-- PROFILE -->
+        <section class="space-y-12">
+
+            <h2 class="font-display text-xs font-bold text-primary tracking-[0.3em] uppercase">
+                User Status
+            </h2>
+
+            <div
+                class="relative glass-panel rounded-3xl p-12 border border-white/5 overflow-hidden shadow-2xl appThreeDTilt card-glare-effect">
+
+                <div class="relative grid lg:grid-cols-2 gap-16 items-center">
+
+                    <div class="space-y-8">
+
+                        <h2 class="font-display text-4xl font-black text-white leading-tight uppercase">
+                            Mission Control Status
+                        </h2>
+
+                        <p class="text-slate-400 text-sm leading-relaxed max-w-md">
+                            Track your mission progress, completed objectives, and crew activity across Astra.
+                        </p>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="p-6 bg-background-dark/50 rounded-xl border border-white/5">
+                                <div class="text-[10px] text-slate-500 uppercase font-bold tracking-widest mb-1">
+                                    Missions Completed
+                                </div>
+                                <div class="text-3xl font-display text-primary">
+                                    {{summary()?.completed_count || 0}}
+                                </div>
+                            </div>
+
+                            <div class="p-6 bg-background-dark/50 rounded-xl border border-white/5">
+                                <div class="text-[10px] text-slate-500 uppercase font-bold tracking-widest mb-1">
+                                    Crew Rank
+                                </div>
+                                <div class="text-3xl font-display text-gold">
+                                    ELITE
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- profile card -->
+                    <div [appThreeDTilt]="30"
+                        class="bg-background-dark/60 backdrop-blur-sm p-8 rounded-2xl border border-white/10 shadow-2xl card-glare-effect">
+
+                        <div class="space-y-6">
+
+                            <div class="flex items-center justify-between border-b border-white/5 pb-4">
+                                <div class="flex items-center gap-4">
+
+                                    <div
+                                        class="w-14 h-14 rounded-full border-2 border-primary p-1 overflow-hidden shadow-lg shadow-primary/20">
+                                        <img [src]="_passport.avatar()"
+                                            class="w-full h-full rounded-full object-cover" />
+                                    </div>
+
+                                    <div>
+                                        <h5 class="font-display text-base text-white font-bold">
+                                            {{_passport.data()?.display_name || 'Operator'}}
+                                        </h5>
+                                        <p class="text-[10px] text-slate-500 uppercase tracking-widest">
+                                            Active Mission
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div
+                                    class="px-3 py-1 bg-white/5 rounded text-[10px] font-bold text-primary border border-white/5">
+                                    LEVEL {{_passport.level()}}
+                                </div>
+                            </div>
+
+                            <button routerLink="/missions"
+                                class="w-full bg-primary hover:bg-primary/90 text-white py-4 rounded-xl font-bold text-xs uppercase tracking-widest shadow-lg shadow-primary/20 transition-all">
+                                Launch New Mission
+                            </button>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="glass-panel border-t border-purple-900/20 py-16 mt-20">
+        <div class="max-w-7xl mx-auto px-6 text-center space-y-6">
+
+            <div class="flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined text-primary text-3xl">auto_awesome</span>
+                <h1 class="font-display font-black text-2xl tracking-[0.5em] text-primary">ASTRA</h1>
+            </div>
+
+            <p class="text-xs text-slate-500 uppercase tracking-[0.2em] max-w-md mx-auto leading-relaxed">
+                A unified mission control platform for teams and crews.
+            </p>
+
+            <p class="text-[9px] text-slate-600 uppercase tracking-widest pt-8">
+                © 2026 Astra Mission Control.
+            </p>
+        </div>
+    </footer>
+</div>

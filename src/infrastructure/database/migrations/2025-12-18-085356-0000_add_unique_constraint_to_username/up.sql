@@ -1,0 +1,5 @@
+-- Your SQL goes here
+ALTER TABLE brawlers
+ADD COLUMN IF NOT EXISTS display_name VARCHAR(50) NOT NULL DEFAULT 'Unknown',
+ADD COLUMN IF NOT EXISTS avatar_url VARCHAR(512),
+ADD COLUMN IF NOT EXISTS avatar_public_id VARCHAR(255);

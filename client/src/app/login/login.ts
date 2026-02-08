@@ -1,20 +1,27 @@
-import { Component, inject, signal } from '@angular/core'
+import { Component, inject, signal, ElementRef, ViewChild, HostListener } from '@angular/core'
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms'
 import { PasswordMatchValidator, PasswordValidator } from '../_helpers/password-validator'
-import { MatFormFieldModule } from '@angular/material/form-field'
-import { MatInputModule } from '@angular/material/input'
-import { MatButtonModule } from '@angular/material/button'
-import { MatCardModule } from '@angular/material/card'
 import { Router, RouterModule } from '@angular/router'
 import { PassportService } from '../_services/passport-service'
+import { CommonModule } from '@angular/common'
 
 @Component({
   selector: 'app-login',
-  imports: [MatCardModule, FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, RouterModule],
+  imports: [FormsModule, ReactiveFormsModule, RouterModule, CommonModule],
   templateUrl: './login.html',
   styleUrl: './login.scss',
 })
 export class Login {
+  @HostListener('mousemove', ['$event'])
+  onMouseMove(e: MouseEvent) {
+    const moveX = (e.clientX - window.innerWidth / 2) * 0.01;
+    const moveY = (e.clientY - window.innerHeight / 2) * 0.01;
+    const pattern = document.querySelector('.yokai-bg-pattern') as HTMLElement;
+    if (pattern) {
+      pattern.style.transform = `translate(${moveX}px, ${moveY}px)`;
+    }
+  }
+
   private usernameMinLength = 4
   private usernameMaxLength = 10
 
@@ -23,7 +30,7 @@ export class Login {
 
   private displaynameMinLength = 3
 
-  mode: 'login' | ' register' = 'login'
+  mode: 'login' | 'register' = 'login'
   form: FormGroup
 
   errorMsg = {
@@ -33,6 +40,9 @@ export class Login {
     displayname: signal(''),
     server: signal(''),
   }
+
+  showPassword = signal(false)
+  showConfirmPassword = signal(false)
 
   private _router = inject(Router)
   private _passport = inject(PassportService)
@@ -54,7 +64,7 @@ export class Login {
   }
 
   toggleMode() {
-    this.mode = this.mode === 'login' ? ' register' : 'login'
+    this.mode = this.mode === 'login' ? 'register' : 'login'
     this.updateForm()
   }
 

@@ -18,6 +18,11 @@ export const routes: Routes = [
     // { path: 'recover-password', loadComponent: () => import('./recover-password/recover-password').then(m => m.RecoverPassword) },
     { path: 'profile', component: Profile, canActivate: [authGuard], runGuardsAndResolvers: 'always' },
     { path: 'missions', component: Missions, canActivate: [authGuard], runGuardsAndResolvers: 'always' },
+    {
+        path: 'missions/:id',
+        loadComponent: () => import('./missions/mission-detail/mission-detail').then(m => m.MissionDetail),
+        canActivate: [authGuard]
+    },
     // *้เพิ่ม
     { path: 'joined-missions', component: JoinedMissions, canActivate: [authGuard], runGuardsAndResolvers: 'always' },
     // *Chat Page

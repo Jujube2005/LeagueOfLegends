@@ -8,7 +8,9 @@ import { AchievementService } from '../_services/achievement-service'
 import { Achievement } from '../_models/achievement'
 import { DatePipe, CommonModule } from '@angular/common'
 
+import { Mission } from '../_models/mission'
 import { InviteService } from '../_services/invite.service'
+import { EditProfileDialog } from '../_dialogs/edit-profile/edit-profile'
 
 @Component({
   selector: 'app-profile',
@@ -18,10 +20,18 @@ import { InviteService } from '../_services/invite.service'
 })
 export class Profile implements OnInit {
   avatar_url: Signal<string>
+  display_name: Signal<string | undefined>
   achievements: Achievement[] = []
   invites: any[] = [] // List of pending invites
+  missions: Mission[] = [] // List of user's missions
+  systemLogs = [
+    { type: 'success', message: 'Neural Link Established', time: new Date() },
+    { type: 'info', message: 'System Diagnostics: Optimal', time: new Date(Date.now() - 3600000 * 2) },
+    { type: 'warning', message: 'Energy Reserves at 94%', time: new Date(Date.now() - 3600000 * 5) },
+    { type: 'info', message: 'Protocol v2.4.0 Loaded', time: new Date(Date.now() - 3600000 * 24) }
+  ];
 
-  private _passport = inject(PassportService)
+  _passport = inject(PassportService)
   private _dialog = inject(MatDialog)
   private _user = inject(UserService)
   private _achievement = inject(AchievementService)
@@ -29,12 +39,24 @@ export class Profile implements OnInit {
   private _cdr = inject(ChangeDetectorRef)
 
   constructor() {
-    this.avatar_url = computed(() => this._passport.avatar())
+    this.avatar_url = this._passport.avatar
+    this.display_name = computed(() => this._passport.data()?.display_name)
   }
+
+  // Computed Stats
+  xp = this._passport.xp;
+  level = this._passport.level;
+
+  nextLevelXp = computed(() => this.level() * 1000);
+  currentLevelProgress = computed(() => {
+    const currentLevelXp = this.xp() % 1000;
+    return (currentLevelXp / 1000) * 100;
+  });
 
   ngOnInit() {
     this.loadAchievements()
     this.loadInvites()
+    this.loadMissions()
   }
 
   // *เพิ่ม
@@ -44,6 +66,15 @@ export class Profile implements OnInit {
       this._cdr.detectChanges()
     } catch (e) {
       console.error('Failed to load achievements', e)
+    }
+  }
+
+  async loadMissions() {
+    try {
+      this.missions = await this._user.getMyMissions()
+      this._cdr.detectChanges()
+    } catch (e) {
+      console.error('Failed to load missions', e)
     }
   }
 
@@ -91,5 +122,6 @@ export class Profile implements OnInit {
       }
     })
   }
+
 }
 

@@ -1,0 +1,7 @@
+CREATE TABLE mission_invites (
+    id SERIAL PRIMARY KEY,
+    mission_id INTEGER NOT NULL REFERENCES missions(id) ON DELETE CASCADE,
+    user_id INTEGER NOT NULL REFERENCES brawlers(id) ON DELETE CASCADE,
+    status VARCHAR(50) DEFAULT 'pending' NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+);

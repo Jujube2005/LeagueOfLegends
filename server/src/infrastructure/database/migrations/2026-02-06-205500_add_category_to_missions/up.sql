@@ -1,0 +1,1 @@
+ALTER TABLE missions ADD COLUMN category VARCHAR(255);

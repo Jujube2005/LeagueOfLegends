@@ -1,68 +1,120 @@
-<div class="filter-form">
-    <h3>Search</h3>
-    <!-- FormsModule  -->
-    <input type="text" [(ngModel)]="filter.name" placeholder="Mission Name" />
-    <select [(ngModel)]="filter.status">
-        <option value="">-- Select Status --</option>
-        <option value="Open">Open</option>
-        <option value="InProgress">In Progress</option>
-        <option value="Completed">Completed</option>
-        <option value="Failed">Failed</option>
-    </select>
-    <select [(ngModel)]="filter.category">
-        <option value="">-- Select Category --</option>
-        <option value="Game">Game</option>
-        <option value="General">General</option>
-        <option value="Sport">Sport</option>
-        <option value="Work">Work</option>
-    </select>
-    <button (click)="onSubmit()">Go</button>
-</div>
-<div class="mission-list">
-    @if((missions$ | async)?.length) {
-    <div class="header">
-        <span class="name">Name</span>
-        <span class="description">Description</span>
-        <span class="category">Category</span>
-        <span class="name">Chief</span>
-        <span class="crew_count">Number of Crew</span>
-        <span class="status">Status</span>
-        <span class="created_at">Created at</span>
-        <span class="updated_at">Updated at</span>
-        @if(isSignin()){
-        <span class="action">Actions</span>
-        }
-    </div>
-    @for (mission of missions$ | async; track mission.id) {
-    <div class="contents">
-        <span class="name">{{mission.name}}</span>
-        <span class="description">{{mission.description}}</span>
-        <span class="category">{{mission.category}}</span>
-        <span class="name">{{mission.chief_display_name}}</span>
-        <span class="crew_count">{{mission.crew_count}} / {{mission.max_crew}}</span>
-        <span class="status">{{mission.status}}</span>
-        <span class="created_at">{{mission.created_at | date:'short'}}</span>
-        <span class="updated_at">{{mission.updated_at | date:'short'}}</span>
+<div class="missions-page">
+    <div class="content-wrapper">
 
-        @if(isSignin()){
-        <!-- *เพิ่ม  -->
-        <div class="actions">
-            @if(!mission.is_member && mission.chief_id !== userId()){
-            <button (click)="joinMission(mission.id)"
-                [disabled]="mission.crew_count >= mission.max_crew || mission.status === 'Completed'">
-                @if(mission.crew_count >= mission.max_crew) {
-                Full
-                } @else if(mission.status === 'Completed') {
-                Completed
-                } @else {
-                Join
-                }
+        <!-- HEADER -->
+        <div class="flex items-center justify-between mb-12">
+            <div>
+                <h1 class="font-display text-4xl font-black text-white tracking-widest uppercase mb-2">
+                    ACTIVE OPERATIONS
+                </h1>
+                <p class="text-slate-500 text-xs uppercase tracking-[0.3em]">
+                    Real-time mission intelligence and deployment
+                </p>
+            </div>
+
+            <div class="h-px flex-1 mx-12 bg-primary/20 hidden md:block"></div>
+        </div>
+
+        <!-- FILTER PANEL -->
+        <div class="filter-panel">
+            <div class="search-input-group">
+                <span class="material-icons">search</span>
+                <input type="text" [(ngModel)]="filter.name" placeholder="SEARCH PROTOCOL NAME..."
+                    (keyup.enter)="onSubmit()" />
+            </div>
+
+            <select [(ngModel)]="filter.status" class="filter-select">
+                <option value="">-- ALL STATUS --</option>
+                <option value="Open">OPEN</option>
+                <option value="InProgress">IN PROGRESS</option>
+                <option value="Completed">COMPLETED</option>
+                <option value="Failed">FAILED</option>
+            </select>
+
+            <select [(ngModel)]="filter.category" class="filter-select">
+                <option value="">-- ALL CATEGORIES --</option>
+                <option value="Game">GAME</option>
+                <option value="General">GENERAL</option>
+                <option value="Sport">SPORT</option>
+                <option value="Work">WORK</option>
+            </select>
+
+            <button (click)="onSubmit()" class="filter-btn">
+                SYNC DATA
             </button>
+        </div>
+
+        <!-- MISSIONS GRID -->
+        <div class="missions-grid">
+            @if (isLoading()) {
+            @for (i of [1,2,3,4,5,6]; track i) {
+            <div class="mission-card opacity-50 animate-pulse">
+                <div class="card-image bg-slate-800"></div>
+                <div class="card-content">
+                    <div class="h-6 w-3/4 bg-slate-700 mb-4 rounded"></div>
+                    <div class="h-4 w-full bg-slate-800 mb-2 rounded"></div>
+                    <div class="h-4 w-5/6 bg-slate-800 mb-6 rounded"></div>
+                </div>
+            </div>
+            }
+            } @else {
+            @for (mission of missions$ | async; track mission.id) {
+            <div class="mission-card group">
+                <div class="category-tag">{{ mission.category || 'OPERATION' }}</div>
+
+                <div class="card-image">
+                    <img [src]="mission.image_url || '/assets/card/card-img-0' + (mission.id % 4 + 1) + '.jpg'"
+                        [alt]="mission.name">
+                    <div [class]="'status-badge ' + mission.status">{{ mission.status }}</div>
+                </div>
+
+                <div class="card-content">
+                    <h4 class="mission-name">{{ mission.name }}</h4>
+                    <p class="mission-desc">{{ mission.description }}</p>
+
+                    <div class="card-stats">
+                        <div class="stat">
+                            <span class="material-icons">person</span>
+                            <span class="truncate max-w-[100px]">{{ mission.chief_display_name }}</span>
+                        </div>
+                        <div class="stat">
+                            <span class="material-icons">groups</span>
+                            <span>{{ mission.crew_count }} / {{ mission.max_crew || 5 }}</span>
+                        </div>
+                    </div>
+
+                    <div class="card-actions">
+                        <a [routerLink]="['/missions', mission.id]" class="btn-view">
+                            VIEW DATA
+                        </a>
+
+                        @if (isSignin()) {
+                        @if (!mission.is_member && mission.chief_id !== userId()) {
+                        <button (click)="joinMission(mission.id)" class="btn-join"
+                            [disabled]="mission.crew_count >= mission.max_crew || mission.status === 'Completed' || mission.status === 'Failed'">
+                            @if(mission.crew_count >= mission.max_crew) { FULL }
+                            @else if(mission.status === 'Completed') { DONE }
+                            @else { ENGAGE }
+                        </button>
+                        } @else {
+                        <button class="btn-join" [disabled]="true" [style.background]="'#334155'">
+                            @if(mission.chief_id === userId()) { CHIEF }
+                            @else { ASSIGNED }
+                        </button>
+                        }
+                        } @else {
+                        <button routerLink="/login" class="btn-join">LOGIN</button>
+                        }
+                    </div>
+                </div>
+            </div>
+            } @empty {
+            <div class="empty-state">
+                <span class="material-icons">cloud_off</span>
+                <p>No active protocols found in current sector.</p>
+            </div>
+            }
             }
         </div>
-        }
-
     </div>
-    }
-    }
 </div>

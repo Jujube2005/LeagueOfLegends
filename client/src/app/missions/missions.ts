@@ -1,4 +1,5 @@
-import { Component, computed, inject, Signal } from '@angular/core'
+import { Component, computed, inject, signal, Signal } from '@angular/core'
+import { RouterLink } from '@angular/router'
 import { MissionService } from '../_services/mission-service'
 import { MissionFilter } from '../_models/mission-filter'
 import { Mission } from '../_models/mission'
@@ -9,7 +10,7 @@ import { PassportService } from '../_services/passport-service'
 
 @Component({
   selector: 'app-missions',
-  imports: [FormsModule, AsyncPipe, DatePipe],
+  imports: [FormsModule, AsyncPipe, DatePipe, RouterLink],
   templateUrl: './missions.html',
   styleUrl: './missions.scss',
 })
@@ -23,6 +24,7 @@ export class Missions {
   readonly missions$ = this._missionsSubject.asObservable()
   isSignin: Signal<boolean>
   userId = this._passport.userId
+  isLoading = signal(true)
 
   constructor() {
     this.isSignin = computed(() => this._passport.data() !== undefined)
@@ -31,8 +33,13 @@ export class Missions {
   }
 
   private async loadMyMission() {
-    const missions = await this._mission.getByFilter(this.filter)
-    this._missionsSubject.next(missions)
+    this.isLoading.set(true)
+    try {
+      const missions = await this._mission.getByFilter(this.filter)
+      this._missionsSubject.next(missions)
+    } finally {
+      this.isLoading.set(false)
+    }
   }
   async onSubmit() {
     this.loadMyMission()

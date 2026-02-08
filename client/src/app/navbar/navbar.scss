@@ -1,57 +1,57 @@
-.spacer {
-    flex: 1 1 auto;
+.dropdown-bridge::before {
+    content: "";
+    position: absolute;
+    top: -12px; // Match the mt-3 gap
+    left: 0;
+    width: 100%;
+    height: 12px;
 }
 
-// app-navbar,
-// .navbar {
-//     flex: 0 0 auto;
-// }
+/* Custom Scrollbar */
+.custom-scrollbar {
+    &::-webkit-scrollbar {
+        width: 4px;
+    }
 
-.my-navbar {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 5px;
+    &::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.02);
+    }
 
+    &::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
 
-    button {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        border: none;
-        background: none;
-
-
-        mat-icon {
-            margin: 0;
-            margin-right: 0.2em;
-            padding: 0;
+        &:hover {
+            background: rgba(255, 255, 255, 0.3);
         }
     }
+}
 
-
-    .home-btn {
-        font-size: x-large;
+/* Animation */
+@keyframes dropdownEnter {
+    from {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.98);
     }
 
-
-    button:not(.home-btn) {
-        font-size: medium;
-        margin-top: 0.5em;
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
     }
+}
 
+.animate-in {
+    animation: dropdownEnter 0.2s cubic-bezier(0.2, 0, 0.13, 1.5) forwards;
+    transform-origin: top right;
+}
 
-    button.active:not(.home-btn) {
-        border-bottom: 0.15em solid #fd2121;
-    }
+/* View Transition for Active Pill */
+::view-transition-group(active-nav-pill) {
+    animation-duration: 400ms;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
 
-
-    .avatar {
-        margin-right: 5px;
-        width: 35px;
-        height: 35px;
-        border-radius: 50%;
-        object-fit: cover;
-    }
+::view-transition-old(active-nav-pill),
+::view-transition-new(active-nav-pill) {
+    height: 100%;
 }

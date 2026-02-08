@@ -1,32 +1,190 @@
-<mat-toolbar class="my-navbar">
-    <span class="home-btn" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">
-        LoL
-    </span>
-    <button class="menu-button" routerLink="/missions" routerLinkActive="active">Missions</button>
-    @if(display_name()){
-    <button class="button" routerLink="/chief" routerLinkActive="active">My Missions</button>
-    <!-- *เพิ่ม  -->
-    <button class="button" routerLink="/joined-missions" routerLinkActive="active">Joined Missions</button>
-    <!-- *เพิ่ม  -->
-    <button class="button" routerLink="/mission-summary" routerLinkActive="active">Summary</button>
-    <!-- *เพิ่ม  -->
-    <button class="button" routerLink="/leaderboard" routerLinkActive="active">Leaderboard</button>
-    }
+@if (!isHidden()) {
+<nav class="fixed top-0 left-0 w-full z-50 glass-panel border-b-0">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <!-- Logo -->
+        <div class="flex items-center gap-3 cursor-pointer group btn-interactive-3d rounded-lg p-1" routerLink="/">
+            <div
+                class="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center border border-primary/40 group-hover:scale-110 transition-transform duration-300">
+                <span class="material-symbols-outlined text-primary scale-110">auto_awesome</span>
+            </div>
+            <h1
+                class="font-display font-black text-2xl tracking-[0.2em] text-primary group-hover:tracking-[0.3em] transition-all">
+                ASTRA</h1>
+        </div>
 
+        <!-- Center Links (Desktop) -->
+        <ul
+            class="hidden md:flex items-center gap-1 p-1 bg-white/5 border border-white/10 rounded-full backdrop-blur-md">
 
-    <span class="spacer"></span>
-    @if (display_name()) {
-    <button mat-icon-button routerLink="/notifications">
-        <mat-icon [matBadge]="invite_count()" [matBadgeHidden]="invite_count() === 0" matBadgeColor="warn">notifications</mat-icon>
-    </button>
-    
-    <button matButton [matMenuTriggerFor]="menu">
-        <img src="{{avatar_url()}}" alt="user avatar" class="avatar">
-        {{display_name()}}
-    </button>
-    <mat-menu #menu="matMenu">
-        <button mat-menu-item class="menu-button" routerLink="/profile">Profile</button>
-        <button mat-menu-item class="menu-button" (click)="logout()">Log-out</button>
-    </mat-menu>
-    }
-</mat-toolbar>
+            <li class="relative btn-interactive-3d rounded-full">
+                <a routerLink="/missions" routerLinkActive #rla1="routerLinkActive"
+                    [routerLinkActiveOptions]="{exact: true}"
+                    class="block px-5 py-2 text-[10px] font-bold uppercase tracking-[0.15em] transition-colors rounded-full hover:text-white"
+                    [class.text-white]="rla1.isActive" [class.text-slate-400]="!rla1.isActive">
+                    Missions
+                </a>
+                @if (rla1.isActive) {
+                <div class="absolute inset-0 bg-white/10 rounded-full -z-10 shadow-inner"
+                    style="view-transition-name: active-nav-pill"></div>
+                }
+            </li>
+
+            <li class="relative btn-interactive-3d rounded-full">
+                <a routerLink="/joined-missions" routerLinkActive #rla2="routerLinkActive"
+                    class="block px-5 py-2 text-[10px] font-bold uppercase tracking-[0.15em] transition-colors rounded-full hover:text-white"
+                    [class.text-white]="rla2.isActive" [class.text-slate-400]="!rla2.isActive">
+                    Protocols
+                </a>
+                @if (rla2.isActive) {
+                <div class="absolute inset-0 bg-white/10 rounded-full -z-10 shadow-inner"
+                    style="view-transition-name: active-nav-pill"></div>
+                }
+            </li>
+
+            <li class="relative btn-interactive-3d rounded-full">
+                <a routerLink="/leaderboard" routerLinkActive #rla3="routerLinkActive"
+                    class="block px-5 py-2 text-[10px] font-bold uppercase tracking-[0.15em] transition-colors rounded-full hover:text-white"
+                    [class.text-white]="rla3.isActive" [class.text-slate-400]="!rla3.isActive">
+                    Leaderboard
+                </a>
+                @if (rla3.isActive) {
+                <div class="absolute inset-0 bg-white/10 rounded-full -z-10 shadow-inner"
+                    style="view-transition-name: active-nav-pill"></div>
+                }
+            </li>
+
+            <li class="relative btn-interactive-3d rounded-full">
+                <a routerLink="/mission-summary" routerLinkActive #rla4="routerLinkActive"
+                    class="block px-5 py-2 text-[10px] font-bold uppercase tracking-[0.15em] transition-colors rounded-full hover:text-white"
+                    [class.text-white]="rla4.isActive" [class.text-slate-400]="!rla4.isActive">
+                    Summary
+                </a>
+                @if (rla4.isActive) {
+                <div class="absolute inset-0 bg-white/10 rounded-full -z-10 shadow-inner"
+                    style="view-transition-name: active-nav-pill"></div>
+                }
+            </li>
+        </ul>
+
+        <!-- Right Section: User & Notifications -->
+        <div class="flex items-center gap-4">
+            @if (display_name()) {
+            <!-- Notifications -->
+            <div class="relative btn-interactive-3d rounded-full">
+                <button (click)="toggleNotifications()"
+                    class="relative p-2 text-slate-400 hover:text-primary transition-colors focus:outline-none">
+                    <span class="material-symbols-outlined">notifications</span>
+                    @if (invite_count() > 0) {
+                    <span
+                        class="absolute top-1.5 right-1.5 w-4 h-4 bg-red-500 text-[9px] font-bold text-white rounded-full flex items-center justify-center border-2 border-background-dark">
+                        {{invite_count()}}
+                    </span>
+                    }
+                </button>
+
+                <!-- Notification Dropdown -->
+                @if (showNotifications()) {
+                <div
+                    class="absolute right-0 mt-2 w-80 bg-[#0F172A] border border-white/10 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+
+                    <!-- Header -->
+                    <div
+                        class="px-4 py-3 border-b border-white/5 bg-white/5 flex justify-between items-center backdrop-blur-sm">
+                        <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400">Incoming Protocols
+                        </h3>
+                        <span
+                            class="text-[9px] bg-primary/10 text-primary px-1.5 py-0.5 rounded border border-primary/20">{{invite_count()}}
+                            New</span>
+                    </div>
+
+                    <!-- Empty State -->
+                    @if (invites().length === 0) {
+                    <div class="p-8 text-center text-slate-500 flex flex-col items-center">
+                        <span class="material-symbols-outlined text-4xl mb-3 opacity-20">notifications_active</span>
+                        <p class="text-[10px] uppercase tracking-widest opacity-60">All systems quiet</p>
+                    </div>
+                    }
+
+                    <!-- List -->
+                    <div class="max-h-[24rem] overflow-y-auto custom-scrollbar">
+                        @for (invite of invites(); track invite.id) {
+                        <div class="p-4 border-b border-white/5 hover:bg-white/5 transition-colors group">
+                            <div class="flex items-start gap-3">
+                                <div
+                                    class="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+                                    <span class="material-symbols-outlined text-primary text-sm">mail</span>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex justify-between items-start mb-1">
+                                        <p class="text-[9px] text-primary uppercase font-bold tracking-wider">Mission
+                                            Invite</p>
+                                        <span class="text-[9px] text-slate-600">{{invite.created_at |
+                                            date:'shortTime'}}</span>
+                                    </div>
+                                    <p class="text-xs text-slate-300 mb-3 leading-relaxed">
+                                        <span class="text-white font-bold">{{invite.chief_name}}</span> requested your
+                                        assistance in
+                                        <span class="text-white font-bold break-words">{{invite.mission_name}}</span>.
+                                    </p>
+
+                                    <div class="flex gap-2">
+                                        <button (click)="accept(invite.id)" [disabled]="isProcessing(invite.id)"
+                                            class="flex-1 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded text-[10px] font-black uppercase tracking-wider transition-all disabled:opacity-50 hover:shadow-[0_0_10px_rgba(16,185,129,0.2)]">
+                                            {{ isProcessing(invite.id) ? 'Connecting...' : 'Accept' }}
+                                        </button>
+                                        <button (click)="decline(invite.id)" [disabled]="isProcessing(invite.id)"
+                                            class="flex-1 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 rounded text-[10px] font-black uppercase tracking-wider transition-all disabled:opacity-50 hover:shadow-[0_0_10px_rgba(244,63,94,0.2)]">
+                                            Decline
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        }
+                    </div>
+                </div>
+                }
+            </div>
+
+            <div class="relative group">
+                <button
+                    class="flex items-center gap-3 pl-2 pr-1 py-1 rounded-full bg-slate-100 dark:bg-white/5 border border-white/10 hover:border-primary/30 transition-all btn-interactive-3d">
+                    <span
+                        class="hidden sm:block text-[10px] font-bold uppercase tracking-widest text-slate-400 pl-2">{{display_name()}}</span>
+                    <div class="w-8 h-8 rounded-full border border-primary/40 p-0.5 overflow-hidden">
+                        <img [src]="avatar_url() || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200'"
+                            alt="avatar" class="w-full h-full rounded-full object-cover">
+                    </div>
+                </button>
+
+                <!-- Dropdown Menu -->
+                <div
+                    class="absolute right-0 mt-3 w-56 py-3 bg-card-dark/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] opacity-0 -translate-y-4 scale-95 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100 group-hover:pointer-events-auto transition-all duration-500 cubic-bezier-[0.34,1.56,0.64,1] z-50 dropdown-bridge">
+                    <div class="px-4 pb-2 mb-2 border-b border-white/5 lg:hidden">
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Menu</p>
+                    </div>
+                    <a routerLink="/profile"
+                        class="flex items-center gap-3 px-4 py-3 text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-primary hover:bg-white/5 transition-all group/item">
+                        <span
+                            class="material-symbols-outlined text-sm transition-transform group-hover/item:scale-125">person</span>
+                        <span class="group-hover/item:translate-x-1 transition-transform">Profile</span>
+                    </a>
+                    <div class="h-px bg-white/5 mx-2 my-1"></div>
+                    <button (click)="logout()"
+                        class="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold uppercase tracking-widest text-red-400 hover:text-red-300 hover:bg-red-500/5 transition-all group/item">
+                        <span
+                            class="material-symbols-outlined text-sm transition-transform group-hover/item:rotate-12">logout</span>
+                        <span class="group-hover/item:translate-x-1 transition-transform">Log-out</span>
+                    </button>
+                </div>
+            </div>
+            } @else {
+            <button routerLink="/login"
+                class="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-lg font-bold uppercase tracking-widest text-[10px] transition-all">
+                Sign In
+            </button>
+            }
+        </div>
+    </div>
+</nav>
+}
