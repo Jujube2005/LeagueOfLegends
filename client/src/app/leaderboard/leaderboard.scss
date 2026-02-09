@@ -1,106 +1,314 @@
-.leaderboard-container {
+// Custom Animations for Leaderboard
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0) translateX(0);
+        opacity: 0.2;
+    }
+
+    50% {
+        transform: translateY(-20px) translateX(10px);
+        opacity: 0.6;
+    }
+}
+
+.animate-float {
+    animation: float 4s infinite ease-in-out;
+}
+
+.animate-bounce-slow {
+    animation: bounce 3s infinite;
+}
+
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(-5%);
+        animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+    }
+
+    50% {
+        transform: translateY(0);
+        animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+    }
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.glow-text-gold {
+    text-shadow: 0 0 15px rgba(234, 179, 8, 0.5);
+}
+
+.perspective-1000 {
+    perspective: 1000px;
+}
+
+
+/* =========================================
+   ASTRA CARD STYLE (Adapted from Home)
+   ========================================= */
+
+.astra-card {
+    position: relative;
+    border-radius: 18px;
+    background: radial-gradient(circle at center, #140c2e, #070312);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    overflow: hidden;
+    backface-visibility: hidden;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+
+    &:hover {
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.4);
+
+        .astra-frame {
+            box-shadow: 0 0 30px rgba(124, 58, 237, 0.4);
+        }
+    }
+}
+
+.astra-frame {
+    position: absolute;
+    inset: 0;
+    border-radius: 18px;
+    padding: 1px;
+    /* The border width */
+    background: linear-gradient(120deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* Rank-specific Frames */
+.rank-1 .astra-frame {
+    background: linear-gradient(120deg, #f59e0b, #fcd34d, #f59e0b);
+    background-size: 200% 200%;
+    animation: borderFlow 4s linear infinite;
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+}
+
+.rank-2 .astra-frame {
+    background: linear-gradient(120deg, #94a3b8, #cbd5e1, #94a3b8);
+    background-size: 200% 200%;
+    animation: borderFlow 6s linear infinite;
+}
+
+.rank-3 .astra-frame {
+    background: linear-gradient(120deg, #c2410c, #fdba74, #c2410c);
+    background-size: 200% 200%;
+    animation: borderFlow 6s linear infinite;
+}
+
+@keyframes borderFlow {
+    0% {
+        background-position: 0%
+    }
+
+    100% {
+        background-position: 200%
+    }
+}
+
+.astra-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 18px;
+    background: rgba(15, 7, 26, 0.8);
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     padding: 2rem;
-    color: #f0e6d2; // LoL Text Color
-    max-width: 800px;
-    margin: 0 auto;
+    z-index: 1;
+}
 
-    h1 {
-        text-align: center;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        margin-bottom: 2rem;
-        color: #c8aa6e; // Gold
-        text-shadow: 0 0 10px rgba(200, 170, 110, 0.5);
+/* ================= THEME BACKGROUND ================= */
+.leaderboard-page {
+    position: relative;
+    min-height: 100vh;
+    background: #0f0714;
+    background-image:
+        radial-gradient(circle at 50% 50%, rgba(76, 29, 149, 0.15) 0%, transparent 50%),
+        linear-gradient(0deg, transparent 24%, rgba(255, 255, 255, .03) 25%, rgba(255, 255, 255, .03) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, .03) 75%, rgba(255, 255, 255, .03) 76%, transparent 77%, transparent),
+        linear-gradient(90deg, transparent 24%, rgba(255, 255, 255, .03) 25%, rgba(255, 255, 255, .03) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, .03) 75%, rgba(255, 255, 255, .03) 76%, transparent 77%, transparent);
+    background-size: 100% 100%, 50px 50px, 50px 50px;
+    color: #e2e8f0;
+    padding-top: 100px;
+    padding-bottom: 5rem;
+    overflow-x: hidden;
+
+    &::after {
+        content: " ";
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+        background-size: 100% 3px, 3px 100%;
+        pointer-events: none;
+        z-index: 1;
+        opacity: 0.8;
+    }
+}
+
+/* Tech Corners */
+.tech-corners::before,
+.tech-corners::after {
+    content: "";
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.tech-corners::before {
+    top: 8px;
+    left: 8px;
+    border-right: none;
+    border-bottom: none;
+}
+
+.tech-corners::after {
+    bottom: 8px;
+    right: 8px;
+    border-left: none;
+    border-top: none;
+}
+
+.rank-1 .tech-corners::before,
+.rank-1 .tech-corners::after {
+    border-color: rgba(245, 158, 11, 0.6);
+}
+
+.rank-2 .tech-corners::before,
+.rank-2 .tech-corners::after {
+    border-color: rgba(148, 163, 184, 0.6);
+}
+
+.rank-3 .tech-corners::before,
+.rank-3 .tech-corners::after {
+    border-color: rgba(194, 65, 12, 0.6);
+}
+
+/* Scan Line */
+.scan-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+    animation: scanVertical 4s linear infinite;
+    opacity: 0.3;
+    pointer-events: none;
+    z-index: 5;
+}
+
+@keyframes scanVertical {
+    0% {
+        top: 0;
+        opacity: 0;
     }
 
-    .leaderboard-table {
-        background: rgba(10, 20, 40, 0.8);
-        border: 2px solid #c8aa6e;
-        border-radius: 4px;
-
-        .header-row {
-            display: flex;
-            padding: 1rem;
-            background: rgba(200, 170, 110, 0.1);
-            font-weight: bold;
-            text-transform: uppercase;
-            border-bottom: 1px solid #444;
-
-            .col {
-                &.rank { width: 25%; }
-                &.player { width: 50%; }
-                &.stats { width: 25%; text-align: right; }
-            }
-        }
-
-        .row {
-            display: flex;
-            padding: 1rem;
-            align-items: center;
-            border-bottom: 1px solid #333;
-            transition: background 0.3s;
-
-            &:last-child {
-                border-bottom: none;
-            }
-
-            &:hover {
-                background: rgba(200, 170, 110, 0.05);
-            }
-
-            .col {
-                &.rank { 
-                    width: 25%; 
-                    display: flex;
-                    flex-direction: column;
-                    
-                    .rank-number {
-                        font-size: 1.2rem;
-                        font-weight: bold;
-                    }
-                    .rank-title {
-                        font-size: 0.8rem;
-                        opacity: 0.7;
-                    }
-                }
-                &.player { 
-                    width: 50%; 
-                    display: flex;
-                    align-items: center;
-                    gap: 1rem;
-
-                    .avatar {
-                        width: 40px;
-                        height: 40px;
-                        border-radius: 50%;
-                        border: 2px solid #444;
-                        object-fit: cover;
-                    }
-                    .name {
-                        font-weight: bold;
-                    }
-                }
-                &.stats { 
-                    width: 25%; 
-                    text-align: right; 
-                    font-size: 1.2rem;
-                    color: #c8aa6e;
-                }
-            }
-
-            // Special Styles for Top 3
-            &.rank-challenger {
-                border-left: 4px solid #00d9ff; // Challenger Blue
-                .rank-title { color: #00d9ff; }
-            }
-            &.rank-grandmaster {
-                border-left: 4px solid #ff4e50; // GM Red
-                .rank-title { color: #ff4e50; }
-            }
-            &.rank-master {
-                border-left: 4px solid #a020f0; // Master Purple
-                .rank-title { color: #a020f0; }
-            }
-        }
+    10% {
+        opacity: 0.5;
     }
+
+    90% {
+        opacity: 0.5;
+    }
+
+    100% {
+        top: 100%;
+        opacity: 0;
+    }
+}
+
+/* Avatar Ring Updates */
+.avatar-ring {
+    position: relative;
+    border-radius: 50%;
+    z-index: 2;
+    padding: 3px;
+    background: rgba(0, 0, 0, 0.5);
+
+    img {
+        border-radius: 50%;
+        position: relative;
+        z-index: 2;
+    }
+
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        padding: 2px;
+        background: conic-gradient(from 0deg, transparent, currentColor, transparent);
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        animation: spin-slow 4s linear infinite;
+    }
+}
+
+.rank-1 .avatar-ring {
+    color: #f59e0b;
+    box-shadow: 0 0 30px rgba(245, 158, 11, 0.2);
+}
+
+.rank-2 .avatar-ring {
+    color: #94a3b8;
+    box-shadow: 0 0 20px rgba(148, 163, 184, 0.2);
+}
+
+.rank-3 .avatar-ring {
+    color: #c2410c;
+    box-shadow: 0 0 20px rgba(194, 65, 12, 0.2);
+}
+
+@keyframes spin-slow {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.rank-badge-3d {
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6));
+    z-index: 20;
 }

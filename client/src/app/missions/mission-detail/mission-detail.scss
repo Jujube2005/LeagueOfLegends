@@ -337,3 +337,13 @@ $glass-border: rgba(255, 255, 255, 0.08);
         transform: translateY(0);
     }
 }
+
+.img-scanlines {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.4) 50%, rgba(0, 0, 0, 0.4));
+    background-size: 100% 4px;
+    pointer-events: none;
+    z-index: 4;
+    opacity: 0.6;
+}

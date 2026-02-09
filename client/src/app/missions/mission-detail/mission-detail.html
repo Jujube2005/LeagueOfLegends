@@ -40,6 +40,7 @@
             <div class="hero-image-v2 aspect-[4/5] sm:aspect-square lg:aspect-[4/5]" [appThreeDTilt]="30">
                 <img [src]="m.image_url || 'https://images.unsplash.com/photo-1614728263952-84ea256f9679?q=80&w=1000&auto=format&fit=crop'"
                     alt="Operation Media" class="w-full h-full object-cover">
+                <div class="img-scanlines"></div>
 
                 <!-- Overlay Decorations -->
                 <div
@@ -155,11 +156,12 @@
             </div>
 
             <!-- MISSION COMMS CARD -->
-            <div class="flex-grow flex flex-col premium-card min-h-[600px]">
+            <div class="flex-col premium-card h-[600px] flex">
                 @if (isMember() || isChief()) {
-                <div class="flex-grow flex flex-col">
+                <div class="flex flex-col h-full overflow-hidden">
                     <!-- Chat Header -->
-                    <div class="px-10 py-6 border-b border-white/5 flex items-center justify-between bg-white/[0.01]">
+                    <div
+                        class="px-10 py-6 border-b border-white/5 flex items-center justify-between bg-white/[0.01] flex-shrink-0">
                         <div class="flex items-center gap-4">
                             <div class="w-2 h-10 bg-primary rounded-full"></div>
                             <div>
@@ -175,12 +177,12 @@
                         </div>
                     </div>
                     <!-- Chat Component -->
-                    <div class="flex-grow relative overflow-hidden">
+                    <div class="flex-1 relative overflow-hidden min-h-0">
                         <app-mission-chat [missionId]="m.id" [chiefId]="m.chief_id"></app-mission-chat>
                     </div>
                 </div>
                 } @else {
-                <div class="flex-grow flex flex-col items-center justify-center p-12 text-center group">
+                <div class="flex-grow flex flex-col items-center justify-center p-12 text-center group h-full">
                     <div class="relative w-32 h-32 mb-10">
                         <div
                             class="absolute inset-0 bg-primary/20 blur-3xl group-hover:bg-primary/40 transition-all rounded-full scale-150">
@@ -210,9 +212,10 @@
 
             <!-- ABORT ACTION -->
             @if (isMember() && !isChief()) {
-            <div class="flex justify-end pt-4 animate-fade-in-up" style="animation-delay: 0.2s">
-                <button (click)="leaveMission()" class="action-btn-v2 danger">
-                    <span class="material-icons">power_settings_new</span>
+            <div class="flex justify-center pt-8 animate-fade-in-up" style="animation-delay: 0.2s">
+                <button (click)="leaveMission()"
+                    class="action-btn-v2 danger w-full md:w-auto px-12 py-4 shadow-lg shadow-red-500/10 hover:shadow-red-500/20 border border-red-500/20">
+                    <span class="material-icons text-red-400">logout</span>
                     ABORT PROTOCOL
                 </button>
             </div>

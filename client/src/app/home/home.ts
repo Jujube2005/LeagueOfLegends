@@ -76,4 +76,12 @@ export class Home {
     // Existing logic or fallback to stacked images if mission image is not set
     return mission.image_url || this.getStackedCardImage(0)
   }
+
+  getRankTitle(missions: number): string {
+    if (missions >= 50) return 'Challenger'
+    if (missions >= 20) return 'Grandmaster'
+    if (missions >= 10) return 'Master'
+    if (missions >= 5) return 'Diamond'
+    return 'Platinum'
+  }
 }

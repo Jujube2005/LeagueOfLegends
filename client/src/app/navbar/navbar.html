@@ -29,17 +29,6 @@
                 }
             </li>
 
-            <li class="relative btn-interactive-3d rounded-full">
-                <a routerLink="/joined-missions" routerLinkActive #rla2="routerLinkActive"
-                    class="block px-5 py-2 text-[10px] font-bold uppercase tracking-[0.15em] transition-colors rounded-full hover:text-white"
-                    [class.text-white]="rla2.isActive" [class.text-slate-400]="!rla2.isActive">
-                    Protocols
-                </a>
-                @if (rla2.isActive) {
-                <div class="absolute inset-0 bg-white/10 rounded-full -z-10 shadow-inner"
-                    style="view-transition-name: active-nav-pill"></div>
-                }
-            </li>
 
             <li class="relative btn-interactive-3d rounded-full">
                 <a routerLink="/leaderboard" routerLinkActive #rla3="routerLinkActive"
@@ -53,17 +42,6 @@
                 }
             </li>
 
-            <li class="relative btn-interactive-3d rounded-full">
-                <a routerLink="/mission-summary" routerLinkActive #rla4="routerLinkActive"
-                    class="block px-5 py-2 text-[10px] font-bold uppercase tracking-[0.15em] transition-colors rounded-full hover:text-white"
-                    [class.text-white]="rla4.isActive" [class.text-slate-400]="!rla4.isActive">
-                    Summary
-                </a>
-                @if (rla4.isActive) {
-                <div class="absolute inset-0 bg-white/10 rounded-full -z-10 shadow-inner"
-                    style="view-transition-name: active-nav-pill"></div>
-                }
-            </li>
         </ul>
 
         <!-- Right Section: User & Notifications -->

@@ -64,84 +64,73 @@
             }
             } @else {
             @for (mission of missions$ | async; track mission.id) {
-            <div class="mission-card group" [appThreeDTilt]="15">
-                <!-- Tech Corners -->
-                <div
-                    class="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-primary/60 rounded-tl-2xl z-20 pointer-events-none">
-                </div>
-                <div
-                    class="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-primary/60 rounded-tr-2xl z-20 pointer-events-none">
-                </div>
-                <div
-                    class="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-primary/60 rounded-bl-2xl z-20 pointer-events-none">
-                </div>
-                <div
-                    class="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-primary/60 rounded-br-2xl z-20 pointer-events-none">
-                </div>
+            <div class="group h-full" [appThreeDTilt]="15">
+                <div class="astra-card w-full h-full">
+                    <div class="astra-frame"></div>
+                    <div class="astra-inner tech-corners p-0 overflow-hidden">
+                        <div class="scan-line"></div>
 
-                <!-- Scanline -->
-                <div
-                    class="absolute inset-0 pointer-events-none z-10 opacity-20 bg-[url('/assets/images/scanline.png')] bg-repeat">
-                </div>
+                        <div class="category-tag">{{ mission.category || 'OPERATION' }}</div>
 
-                <div class="category-tag">{{ mission.category || 'OPERATION' }}</div>
+                        <div class="card-image holographic-sheen">
+                            <img [src]="mission.image_url || '/assets/card/card-img-0' + (mission.id % 4 + 1) + '.jpg'"
+                                [alt]="mission.name">
+                            <div [class]="'status-badge ' + mission.status">{{ mission.status }}</div>
+                            <div class="img-scanlines"></div>
 
-                <div class="card-image holographic-sheen">
-                    <img [src]="mission.image_url || '/assets/card/card-img-0' + (mission.id % 4 + 1) + '.jpg'"
-                        [alt]="mission.name">
-                    <div [class]="'status-badge ' + mission.status">{{ mission.status }}</div>
-
-                    <!-- Gradient Overlay -->
-                    <div
-                        class="absolute inset-0 bg-gradient-to-t from-[#140c2e] via-transparent to-transparent pointer-events-none">
-                    </div>
-                </div>
-
-                <div class="card-content">
-                    <h4 class="mission-name">{{ mission.name }}</h4>
-                    <p class="mission-desc">{{ mission.description }}</p>
-
-                    <div class="card-stats">
-                        <div class="stat">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#7c3aed]" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                            </svg>
-                            <span class="truncate max-w-[100px]">{{ mission.chief_display_name }}</span>
+                            <!-- Gradient Overlay -->
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-[#140c2e] via-transparent to-transparent pointer-events-none">
+                            </div>
                         </div>
-                        <div class="stat">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#7c3aed]" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                            </svg>
-                            <span>{{ mission.crew_count }} / {{ mission.max_crew || 5 }}</span>
+
+                        <div class="card-content">
+                            <h4 class="mission-name">{{ mission.name }}</h4>
+                            <p class="mission-desc">{{ mission.description }}</p>
+
+                            <div class="card-stats">
+                                <div class="stat">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#7c3aed]" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                    </svg>
+                                    <span class="truncate max-w-[100px]">{{ mission.chief_display_name }}</span>
+                                </div>
+                                <div class="stat">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#7c3aed]" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                    </svg>
+                                    <span>{{ mission.crew_count }} / {{ mission.max_crew || 5 }}</span>
+                                </div>
+                            </div>
+
+                            <div class="card-actions">
+                                <button (click)="openMissionModal(mission.id)" class="btn-view">
+                                    VIEW DATA
+                                </button>
+
+                                @if (isSignin()) {
+                                @if (!mission.is_member && mission.chief_id !== userId()) {
+                                <button (click)="joinMission(mission.id)" class="btn-join"
+                                    [disabled]="mission.crew_count >= mission.max_crew || mission.status === 'Completed' || mission.status === 'Failed'">
+                                    @if(mission.crew_count >= mission.max_crew) { FULL }
+                                    @else if(mission.status === 'Completed') { DONE }
+                                    @else { ENGAGE }
+                                </button>
+                                } @else {
+                                <button class="btn-join" [disabled]="true" [style.background]="'#334155'">
+                                    @if(mission.chief_id === userId()) { CHIEF }
+                                    @else { ASSIGNED }
+                                </button>
+                                }
+                                } @else {
+                                <button routerLink="/login" class="btn-join">LOGIN</button>
+                                }
+                            </div>
                         </div>
-                    </div>
-
-                    <div class="card-actions">
-                        <button (click)="openMissionModal(mission.id)" class="btn-view">
-                            VIEW DATA
-                        </button>
-
-                        @if (isSignin()) {
-                        @if (!mission.is_member && mission.chief_id !== userId()) {
-                        <button (click)="joinMission(mission.id)" class="btn-join"
-                            [disabled]="mission.crew_count >= mission.max_crew || mission.status === 'Completed' || mission.status === 'Failed'">
-                            @if(mission.crew_count >= mission.max_crew) { FULL }
-                            @else if(mission.status === 'Completed') { DONE }
-                            @else { ENGAGE }
-                        </button>
-                        } @else {
-                        <button class="btn-join" [disabled]="true" [style.background]="'#334155'">
-                            @if(mission.chief_id === userId()) { CHIEF }
-                            @else { ASSIGNED }
-                        </button>
-                        }
-                        } @else {
-                        <button routerLink="/login" class="btn-join">LOGIN</button>
-                        }
                     </div>
                 </div>
             </div>
