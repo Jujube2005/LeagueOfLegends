@@ -1,5 +1,7 @@
 {
-  "buildCommand": "ng build",
-  "outputDirectory": "dist/astra-missions/browser",
-  "framework": "angular"
+  "version": 2,
+  "public": true,
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
 }
