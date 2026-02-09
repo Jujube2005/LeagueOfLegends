@@ -1,39 +1,75 @@
 <div class="chat-container">
+    <!-- Stealth Tabs -->
     <div class="tabs">
-        <button [class.active]="filter === 'all'" (click)="filter = 'all'">All</button>
-        <button [class.active]="filter === 'chat'" (click)="filter = 'chat'">Chat</button>
-        <button [class.active]="filter === 'activity'" (click)="filter = 'activity'">Activity</button>
+        <button [class.active]="filter === 'all'" (click)="filter = 'all'">
+            <span class="material-icons">ALL</span>
+        </button>
+        <button [class.active]="filter === 'chat'" (click)="filter = 'chat'">
+            <span class="material-icons">COMMS</span>
+        </button>
+        <button [class.active]="filter === 'activity'" (click)="filter = 'activity'">
+            <span class="material-icons">analytics</span>
+        </button>
     </div>
 
-    <div class="messages-list">
-        <div *ngIf="loadingMessages" class="text-center p-2 text-gray-500">Loading messages...</div>
-
-        <div *ngFor="let msg of filteredMessages" class="message"
-            [ngClass]="{'system': msg.type_ === 'system', 'chat': msg.type_ === 'chat'}">
-
-            <div *ngIf="msg.type_ === 'chat'" class="sender-name">
-                <span *ngIf="chiefId && msg.user_id === chiefId"
-                    style="color: gold; font-weight: bold; margin-right: 4px;">[Chief]</span>
-                {{ msg.user_display_name || 'Unknown' }}
-            </div>
-
-            <div class="msg-content">{{ msg.content }}</div>
-
-            <div class="timestamp">
-                {{ msg.created_at | date:'short' }}
-            </div>
+    <div class="messages-list custom-scrollbar">
+        <div *ngIf="loadingMessages" class="loading-state">
+            <div class="scanner"></div>
+            <span>DECRYPTING UPLINK...</span>
         </div>
 
-        <div *ngIf="!loadingMessages && filteredMessages.length === 0" class="text-center p-4 text-gray-500">
-            No messages found.
+        <div *ngFor="let msg of filteredMessages" class="message-wrapper" [ngClass]="{
+                'system': msg.type_ === 'system', 
+                'sent': msg.type_ === 'chat' && msg.user_id === passport.userId(),
+                'received': msg.type_ === 'chat' && msg.user_id !== passport.userId()
+            }">
+
+            <!-- Chat Message -->
+            <ng-container *ngIf="msg.type_ === 'chat'">
+                <div class="avatar-container">
+                    <div class="avatar-ring"></div>
+                    <img [src]="msg.user_avatar_url || 'https://api.dicebear.com/7.x/bottts/svg?seed=' + msg.user_display_name"
+                        class="avatar-img">
+                </div>
+                <div class="message-body">
+                    <div class="message-header">
+                        <span class="sender">{{ msg.user_display_name }}</span>
+                        <span *ngIf="chiefId && msg.user_id === chiefId" class="chief-tag">CHIEF</span>
+                        <span class="dot"></span>
+                        <span class="time">{{ msg.created_at | date:'HH:mm' }}</span>
+                    </div>
+                    <div class="bubble">
+                        {{ msg.content }}
+                        <div class="bubble-glow"></div>
+                    </div>
+                </div>
+            </ng-container>
+
+            <!-- System Message -->
+            <ng-container *ngIf="msg.type_ === 'system'">
+                <div class="system-log">
+                    <span class="log-prefix">SIGNAL_EVENT</span>
+                    <span class="log-content">{{ msg.content }}</span>
+                    <span class="log-time">{{ msg.created_at | date:'HH:mm' }}</span>
+                </div>
+            </ng-container>
+        </div>
+
+        <div *ngIf="!loadingMessages && filteredMessages.length === 0" class="empty-state">
+            <span class="material-icons">sensors_off</span>
+            <p>NO ACTIVE TRANSMISSIONS DETECTED</p>
         </div>
     </div>
 
+    <!-- Uplink Input Area -->
     <div class="input-area" *ngIf="filter !== 'activity'">
-        <input type="text" [(ngModel)]="newMessage" (keyup.enter)="sendMessage()" placeholder="Type a message..."
-            [disabled]="sendingMessage">
-        <button (click)="sendMessage()" [disabled]="!newMessage.trim() || sendingMessage">
-            {{ sendingMessage ? 'Sending...' : 'Send' }}
+        <div class="input-wrapper">
+            <input type="text" [(ngModel)]="newMessage" (keyup.enter)="sendMessage()"
+                placeholder="ENTER SECURE TRANSMISSION…" [disabled]="sendingMessage">
+            <div class="input-glow"></div>
+        </div>
+        <button (click)="sendMessage()" class="send-btn" [disabled]="!newMessage.trim() || sendingMessage">
+            <span class="material-icons">{{ sendingMessage ? 'sync' : 'send' }}</span>
         </button>
     </div>
 </div>

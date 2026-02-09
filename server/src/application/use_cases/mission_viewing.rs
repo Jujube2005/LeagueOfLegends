@@ -68,4 +68,12 @@ where
             .await?;
         Ok(models)
     }
+
+    pub async fn get_popular_missions(&self, brawler_id: i32) -> Result<Vec<MissionModel>> {
+        let models = self
+            .mission_viewing_repository
+            .get_popular_missions(brawler_id)
+            .await?;
+        Ok(models)
+    }
 }

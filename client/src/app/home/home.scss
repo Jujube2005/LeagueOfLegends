@@ -27,25 +27,34 @@
 }
 
 /* ================= CARD POSITION ================= */
+/* ================= CARD POSITION ================= */
+/* Deprecated stacking layout - kept for reference if needed, but overridden by grid classes in HTML */
 .mission-deck {
-    position: relative;
+    /* position: relative;
     height: 550px;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: center; */
 }
 
 .mission-card-stacked {
+    /* Legacy stacking styles */
     position: absolute;
     width: 320px;
     height: 460px;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    /* Base position */
     z-index: var(--z-index);
     cursor: pointer;
     perspective: 1500px;
+    transform-style: preserve-3d;
+}
+
+.mission-card-unit {
+    position: relative;
+    /* Dimensions handled by tailwind in HTML */
+    cursor: pointer;
     transform-style: preserve-3d;
 }
 
@@ -95,7 +104,8 @@
 }
 
 /* hover → กุญแจเรือง */
-.mission-card-stacked:hover .lock-icon {
+.mission-card-stacked:hover .lock-icon,
+.mission-card-unit:hover .lock-icon {
     transform: scale(1.25);
     text-shadow: 0 0 12px rgba(192, 132, 252, 0.9);
     color: #c084fc;
@@ -106,7 +116,8 @@
     transition: all 0.3s ease;
 }
 
-.mission-card-stacked:hover .lock-circle {
+.mission-card-stacked:hover .lock-circle,
+.mission-card-unit:hover .lock-circle {
     animation: pulseGlow 0.8s ease;
 }
 
@@ -125,7 +136,8 @@
 }
 
 /* สั่นและเรืองแสงรุนแรงขึ้นเมื่อ hover */
-.mission-card-stacked:hover {
+.mission-card-stacked:hover,
+.mission-card-unit:hover {
     animation: unlockShake 0.35s ease, astraPulse 1.5s infinite alternate;
 }
 
@@ -141,28 +153,29 @@
 
 @keyframes unlockShake {
     0% {
-        transform: translate(-50%, -50%) rotate(0);
+        transform: translate(0, 0) rotate(0);
     }
 
     25% {
-        transform: translate(-50%, -50%) rotate(1deg);
+        transform: translate(0, 0) rotate(1deg);
     }
 
     50% {
-        transform: translate(-50%, -50%) rotate(-1deg);
+        transform: translate(0, 0) rotate(-1deg);
     }
 
     75% {
-        transform: translate(-50%, -50%) rotate(0.5deg);
+        transform: translate(0, 0) rotate(0.5deg);
     }
 
     100% {
-        transform: translate(-50%, -50%) rotate(0);
+        transform: translate(0, 0) rotate(0);
     }
 }
 
 /* CSS Flip on Hover */
-.mission-card-stacked:hover .mission-card-flip {
+.mission-card-stacked:hover .mission-card-flip,
+.mission-card-unit:hover .mission-card-flip {
     transform: rotateY(180deg);
 }
 

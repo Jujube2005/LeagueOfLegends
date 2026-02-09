@@ -13,4 +13,6 @@ pub trait MissionViewingRepository: Send + Sync {
     async fn get_all(&self, filter: &MissionFilter, brawler_id: i32) -> Result<Vec<MissionModel>>;
     // *เพิ่ม
     async fn get_joined_missions(&self, brawler_id: i32) -> Result<Vec<MissionModel>>;
+    // *เพิ่ม
+    async fn get_popular_missions(&self, brawler_id: i32) -> Result<Vec<MissionModel>>;
 }

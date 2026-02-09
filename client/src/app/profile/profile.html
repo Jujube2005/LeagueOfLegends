@@ -8,7 +8,7 @@
             <div class="lg:col-span-1 border-2 border-purple-500/20 yokai-card p-8 text-center animate-soft-float">
                 <div class="avatar-container mb-6 relative">
                     <div class="avatar-wrapper">
-                        <img [src]="avatar_url() || 'assets/default-avatar.png'" alt="Avatar">
+                        <img [src]="_passport.data()?.avatar_url || 'assets/default.avatar.jpg'" alt="Avatar">
                     </div>
                     <button (click)="openDialog()" class="edit-btn shadow-lg">
                         <span class="material-icons text-sm">edit</span>

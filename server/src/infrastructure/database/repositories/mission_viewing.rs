@@ -213,7 +213,6 @@ ORDER BY m.created_at DESC
 SELECT 
     b.id,
     b.display_name,
-    b.tagline,
     COALESCE(b.avatar_url, '') AS avatar_url,
     (
         (SELECT COUNT(cm_s.mission_id)::INTEGER 
@@ -242,5 +241,53 @@ WHERE cm.mission_id = $1
         .await??;
 
         Ok(list)
+    }
+
+    // *เพิ่ม
+    async fn get_popular_missions(&self, brawler_id: i32) -> Result<Vec<MissionModel>> {
+        use diesel::sql_types::Int4;
+
+        let db_pool = Arc::clone(&self.db_pool);
+        let rows = tokio::task::spawn_blocking(move || -> Result<Vec<MissionModel>> {
+            let mut conn = db_pool.get()?;
+
+            let sql = r#"
+SELECT
+    m.id,
+    m.name,
+    m.description,
+    m.category,
+    m.max_crew,
+    m.status,
+    m.chief_id,
+    COALESCE(b.display_name, '') AS chief_display_name,
+    COUNT(cm.brawler_id) AS crew_count,
+    EXISTS (
+        SELECT 1 FROM crew_memberships cm2
+        WHERE cm2.mission_id = m.id
+          AND cm2.brawler_id = $1
+    ) AS is_member,
+    m.created_at,
+    m.updated_at
+FROM missions m
+LEFT JOIN brawlers b ON b.id = m.chief_id
+LEFT JOIN crew_memberships cm ON cm.mission_id = m.id
+WHERE m.status != 'Completed' AND m.status != 'Failed'
+GROUP BY
+    m.id, b.display_name, m.name, m.description, m.category, m.max_crew,
+    m.status, m.chief_id, m.created_at, m.updated_at
+ORDER BY crew_count DESC, m.updated_at DESC
+LIMIT 6
+"#;
+
+            let rows = diesel::sql_query(sql)
+                .bind::<Int4, _>(brawler_id)
+                .load::<MissionModel>(&mut conn)?;
+            
+            Ok(rows)
+        })
+        .await??;
+
+        Ok(rows)
     }
 }

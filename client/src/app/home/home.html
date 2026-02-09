@@ -89,17 +89,17 @@
 
                 <div class="flex items-center justify-between">
                     <h2 class="font-display text-2xl font-bold tracking-widest text-slate-100 uppercase">
-                        Active Missions
+                        TOP 6 HOT MISSIONS
                     </h2>
                     <div class="h-px flex-1 mx-8 bg-purple-900/30"></div>
                 </div>
 
-                <div class="mission-deck">
-                    @for (mission of missions(); track mission.id; let i = $index; let total = $count) {
-                    <div class="mission-card-stacked" [style.--index]="i" [style.--total]="total"
-                        [style.--z-index]="total - i">
+                <div
+                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center place-content-center px-4 w-full">
+                    @for (mission of missions(); track mission.id) {
+                    <div class="mission-card-unit relative w-[320px] h-[460px]" [style.perspective]="'1500px'">
 
-                        <div class="tilt-wrapper card-glare-effect" [appThreeDTilt]="50">
+                        <div class="tilt-wrapper card-glare-effect" [appThreeDTilt]="30">
                             <div class="mission-card-flip">
 
                                 <!-- FRONT: LOCKED CARD DESIGN -->

@@ -18,7 +18,7 @@ export class PassportService {
   avatar = signal<string>("")
 
   // *เพิ่ม
-  userId = computed(() => {
+  userId = computed<number | undefined>(() => {
     const passport = this.data()
     if (!passport?.token) return undefined
     try {

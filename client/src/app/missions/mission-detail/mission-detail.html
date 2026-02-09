@@ -1,380 +1,223 @@
-<div
-    class="mission-detail-page min-h-screen font-sans transition-colors duration-300 text-slate-800 dark:text-slate-100 pb-20">
+<div class="mission-detail-page bg-[#07040a]">
+    <!-- Ambient Background Lighting -->
+    <div class="ambient-glow ambient-glow-1"></div>
+    <div class="ambient-glow ambient-glow-2"></div>
 
     @if (isLoading()) {
-    <div class="flex flex-col items-center justify-center min-h-screen">
-        <div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary dark:border-gold mb-4">
+    <div class="flex flex-col items-center justify-center min-h-[60vh] relative z-10">
+        <div class="relative w-24 h-24 mb-8">
+            <div class="absolute inset-0 border-4 border-primary/20 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+            <div
+                class="absolute inset-4 border-2 border-primary/40 border-b-transparent rounded-full animate-spin-slow">
+            </div>
         </div>
-        <p class="text-xl font-display tracking-widest animate-pulse">INITIALIZING PROTOCOL...</p>
+        <p class="text-sm font-black tracking-[0.5em] text-primary animate-pulse">ESTABLISHING SECURE UPLINK...</p>
     </div>
     }
 
     @else if (error()) {
-    <div class="flex flex-col items-center justify-center min-h-screen text-red-500">
-        <span class="material-icons text-6xl mb-4">error_outline</span>
-        <h2 class="text-2xl font-bold mb-2">CONNECTION FAILURE</h2>
-        <p>{{ error() }}</p>
-        <button (click)="loadMissionData()"
-            class="mt-6 px-6 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors">
-            RETRY UPLINK
+    <div class="flex flex-col items-center justify-center min-h-[60vh] text-red-500 relative z-10 p-12 text-center">
+        <div
+            class="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mb-6 border border-red-500/20">
+            <span class="material-icons text-4xl">gpp_maybe</span>
+        </div>
+        <h2 class="text-3xl font-black tracking-tight mb-4">CRITICAL UPLINK ERROR</h2>
+        <p class="text-sm text-red-500/60 max-w-md mb-10 leading-relaxed">{{ error() }}</p>
+        <button (click)="loadMissionData()" class="action-btn-v2 danger px-12">
+            RETRY HANDSHAKE
         </button>
     </div>
     }
 
     @else if (mission(); as m) {
-    <main class="max-w-7xl mx-auto px-4 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 p-4 md:p-10 relative z-10 max-w-7xl mx-auto">
 
-        <!-- Breadcrumb -->
-        <div class="flex items-center gap-2 mb-8 text-sm opacity-60">
-            <a routerLink="/missions" class="hover:text-primary dark:hover:text-gold transition-colors">Missions</a>
-            <span class="material-icons text-xs">chevron_right</span>
-            <span class="text-primary dark:text-gold font-semibold uppercase">{{ m.name }}</span>
-        </div>
+        <!-- LEFT COLUMN: OPERATIONAL MEDIA & SQUAD -->
+        <div class="lg:col-span-5 space-y-10 animate-fade-in-up">
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- 3D HERO IMAGE -->
+            <div class="hero-image-v2 aspect-[4/5] sm:aspect-square lg:aspect-[4/5]" [appThreeDTilt]="30">
+                <img [src]="m.image_url || 'https://images.unsplash.com/photo-1614728263952-84ea256f9679?q=80&w=1000&auto=format&fit=crop'"
+                    alt="Operation Media" class="w-full h-full object-cover">
 
-            <!-- Left Column: Image & Party -->
-            <div class="lg:col-span-4 space-y-6">
+                <!-- Overlay Decorations -->
+                <div
+                    class="absolute top-8 left-8 p-4 bg-black/40 backdrop-blur-md rounded-2xl border border-white/10 z-10">
+                    <span class="text-[10px] font-black tracking-[0.3em] text-white/80 uppercase">{{ m.category ||
+                        'OPERATION' }}</span>
+                </div>
 
-                <!-- Mission Image Card -->
-                <div class="ornate-border rounded-2xl overflow-hidden relative group" [appThreeDTilt]="15">
-                    <img [src]="m.image_url || '/assets/card/card-img-01.jpg'" [alt]="m.name"
-                        class="w-full h-[600px] object-cover transition-transform duration-700 group-hover:scale-110">
-
-                    <div class="absolute inset-0 bg-gradient-to-t from-background-dark via-transparent to-transparent">
-                    </div>
-
-                    <div class="absolute bottom-6 left-6 right-6 translate-z-20">
+                <div class="absolute bottom-10 left-10 right-10 z-10">
+                    <div class="flex items-center gap-3 mb-4">
                         <span
-                            class="px-3 py-1 bg-red-600 text-white text-[10px] font-bold tracking-[0.2em] rounded-sm mb-2 inline-block shadow-lg shadow-red-600/20">
-                            {{ m.category || 'EPIC THREAT' }}
+                            class="px-3 py-1 bg-white/10 backdrop-blur-md border border-white/10 rounded-full text-[10px] font-black tracking-widest text-primary-400 uppercase">
+                            STATUS: {{ m.status }}
                         </span>
-                        <h2 class="font-display text-4xl font-bold text-white mb-2 leading-tight drop-shadow-lg">
-                            {{ m.name }}
-                        </h2>
-
-                        <div class="flex gap-4">
-                            <div class="flex items-center gap-1 text-gold drop-shadow-md">
-                                <span class="material-icons text-sm">stars</span>
-                                <span class="text-xs font-bold">LVL {{ m.min_level || 40 }}</span>
-                            </div>
-                            <div class="flex items-center gap-1 text-purple-300 drop-shadow-md">
-                                <span class="material-icons text-sm">location_on</span>
-                                <span class="text-xs font-bold">{{ m.location || 'FORBIDDEN GARDEN' }}</span>
-                            </div>
-                        </div>
                     </div>
+                    <h1 class="text-4xl md:text-5xl font-black tracking-tighter text-white leading-none uppercase">{{
+                        m.name }}</h1>
                 </div>
 
-                <!-- Active Party / Crew -->
-                <div
-                    class="bg-card-light dark:bg-card-dark rounded-xl p-6 border border-primary/20 backdrop-blur-sm bg-opacity-90">
-                    <h3 class="font-display text-lg font-bold mb-4 flex items-center gap-2">
-                        <span class="material-icons text-primary dark:text-gold">groups</span>
-                        ACTIVE PARTY ({{ crew().length }}/{{ m.max_crew || 5 }})
-                    </h3>
-
-                    <div class="space-y-4 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-                        @for (member of crew(); track member.id) {
-                        <div
-                            class="flex items-center justify-between p-3 bg-primary/5 rounded-lg border border-primary/10 hover:bg-primary/10 transition-colors">
-                            <div class="flex items-center gap-3">
-                                <img [src]="member.avatar_url || 'assets/default-avatar.png'"
-                                    class="w-8 h-8 rounded border border-gold object-cover">
-                                <div>
-                                    <p class="text-xs font-bold text-slate-200">{{ member.display_name }}</p>
-                                    <p class="text-[10px] opacity-60 uppercase">{{ member.role || 'Vanguard' }}</p>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span class="text-green-400 text-[10px] font-bold">READY</span>
-                                <!-- Only Chief can kick, and can't kick self -->
-                                @if (isChief() && member.id !== _passport.userId()) {
-                                <button (click)="false" class="text-red-500 hover:text-red-400 material-icons text-sm"
-                                    title="Kick Member">remove_circle_outline</button>
-                                }
-                            </div>
-                        </div>
-                        }
-
-                        @if (crew().length < (m.max_crew || 5)) { <div
-                            class="flex items-center justify-between p-3 bg-primary/5 rounded-lg border border-primary/10 border-dashed">
-                            <div class="flex items-center gap-3">
-                                <div
-                                    class="w-8 h-8 rounded border border-dashed border-primary/40 flex items-center justify-center">
-                                    <span class="material-icons text-xs text-primary/40">add</span>
-                                </div>
-                                <p class="text-[10px] font-bold opacity-40">WAITING FOR PARTY...</p>
-                            </div>
-                    </div>
-                    }
-                </div>
-
-                <div class="mt-8">
-                    <h3 class="font-display text-sm font-bold mb-3 opacity-60">GLOBAL PROGRESS</h3>
-                    <div class="h-2 bg-primary/10 rounded-full overflow-hidden">
-                        <div class="h-full bg-gradient-to-r from-primary to-gold w-3/4 animate-pulse"></div>
-                    </div>
-                    <p class="text-[10px] mt-2 text-right font-bold tracking-wider opacity-70">752/1000 YOKAI BANISHED
-                    </p>
-                </div>
+                <!-- Glare and Tech Brackets for Image -->
+                <div class="tech-corner tech-corner-tl"></div>
+                <div class="tech-corner tech-corner-tr"></div>
+                <div class="tech-corner tech-corner-bl"></div>
+                <div class="tech-corner tech-corner-br"></div>
             </div>
-        </div>
 
-        <!-- Right Column: Details & Actions -->
-        <div class="lg:col-span-8 space-y-8">
+            <!-- SQUAD ROSTER CARD -->
+            <div class="premium-card p-10 space-y-8">
+                <div class="tech-corner tech-corner-tl opacity-40"></div>
+                <div class="tech-corner tech-corner-br opacity-40"></div>
 
-            <!-- Mission Briefing -->
-            <section
-                class="bg-card-light dark:bg-card-dark p-8 rounded-2xl border border-primary/20 shadow-xl backdrop-blur-sm bg-opacity-90 relative overflow-hidden">
-                <!-- Background decoration -->
-                <div
-                    class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none">
-                </div>
-
-                <div class="flex flex-wrap items-start justify-between gap-6 mb-8 relative z-10">
+                <div class="flex items-center justify-between border-b border-white/5 pb-6">
                     <div>
-                        <h3 class="text-primary dark:text-gold font-display font-bold tracking-widest text-sm mb-2">
-                            MISSION PROTOCOL #{{ m.id }}
-                        </h3>
-                        <h1
-                            class="font-display text-4xl font-black mb-4 uppercase tracking-tight text-white leading-tight">
-                            {{ m.name }}
-                        </h1>
-                        <p class="max-w-2xl opacity-80 leading-relaxed text-sm text-slate-300">
-                            {{ m.description || 'Strange silhouettes have been seen weaving through the ancient bamboo
-                            groves. Reports speak of a Weaver that ensnares the souls of the unwary in threads of
-                            moonlight. You are tasked with infiltrating the Forbidden Garden, identifying the entity,
-                            and neutralising the threat before the lunar eclipse.' }}
-                        </p>
+                        <h3 class="text-xs font-black tracking-[0.4em] text-white/30 uppercase mb-1">Active Squad</h3>
+                        <p class="text-xl font-black text-white">DEPLOIMENT STATUS</p>
                     </div>
-
-                    <!-- Timer -->
-                    <div class="bg-primary/10 p-4 rounded-xl border border-primary/20 min-w-[160px] backdrop-blur-md">
-                        <p class="text-[10px] font-bold opacity-60 mb-1 uppercase tracking-tighter text-slate-300">Time
-                            Remaining</p>
-                        <p class="font-display text-2xl font-bold text-red-500 animate-pulse">14:22:09</p>
-                        <p class="text-[10px] opacity-60 mt-2 text-slate-400">Ends on Eclipse Night</p>
+                    <div class="text-right">
+                        <span class="text-3xl font-black text-primary">{{ crew().length }}</span>
+                        <span class="text-xs font-bold text-white/20 ml-2">/ {{ m.max_crew }}</span>
                     </div>
                 </div>
 
-                <!-- Stats Grid -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 relative z-10">
-                    <div
-                        class="p-4 bg-primary/5 rounded-lg border border-primary/10 text-center hover:bg-primary/10 transition-colors group">
-                        <span
-                            class="material-icons text-primary dark:text-gold mb-1 group-hover:scale-110 transition-transform">speed</span>
-                        <p class="text-[10px] font-bold opacity-60 uppercase text-slate-400">Difficulty</p>
-                        <p class="font-bold text-red-400">{{ m.difficulty || 'MASTER' }}</p>
-                    </div>
-                    <div
-                        class="p-4 bg-primary/5 rounded-lg border border-primary/10 text-center hover:bg-primary/10 transition-colors group">
-                        <span
-                            class="material-icons text-primary dark:text-gold mb-1 group-hover:scale-110 transition-transform">hourglass_bottom</span>
-                        <p class="text-[10px] font-bold opacity-60 uppercase text-slate-400">Duration</p>
-                        <p class="font-bold text-slate-200">{{ m.duration || '45 MINS' }}</p>
-                    </div>
-                    <div
-                        class="p-4 bg-primary/5 rounded-lg border border-primary/10 text-center hover:bg-primary/10 transition-colors group">
-                        <span
-                            class="material-icons text-primary dark:text-gold mb-1 group-hover:scale-110 transition-transform">security</span>
-                        <p class="text-[10px] font-bold opacity-60 uppercase text-slate-400">Min Level</p>
-                        <p class="font-bold text-slate-200">{{ m.min_level || 40 }}</p>
-                    </div>
-                    <div
-                        class="p-4 bg-primary/5 rounded-lg border border-primary/10 text-center hover:bg-primary/10 transition-colors group">
-                        <span
-                            class="material-icons text-primary dark:text-gold mb-1 group-hover:scale-110 transition-transform">token</span>
-                        <p class="text-[10px] font-bold opacity-60 uppercase text-slate-400">Type</p>
-                        <p class="font-bold text-slate-200">{{ m.category || 'INFILTRATION' }}</p>
-                    </div>
-                </div>
-
-                <!-- Objectives -->
-                <div class="mb-10 relative z-10">
-                    <h4 class="font-display text-lg font-bold mb-6 flex items-center gap-2 text-white">
-                        <span class="w-1 h-6 bg-gold shadow-[0_0_10px_#fbbf24]"></span>
-                        PRIMARY OBJECTIVES
-                    </h4>
-                    <div class="space-y-4">
-                        <div class="flex items-center gap-4 group cursor-default">
-                            <div
-                                class="w-6 h-6 border-2 border-primary/30 rounded flex items-center justify-center group-hover:border-primary transition-colors bg-primary/5">
+                <div class="space-y-4 max-h-[400px] overflow-y-auto custom-scrollbar pr-4">
+                    @for (member of crew(); track member.id) {
+                    <div class="brawler-row group">
+                        <div class="avatar-wrapper">
+                            <img [src]="member.avatar_url || 'https://api.dicebear.com/7.x/bottts/svg?seed=' + member.display_name"
+                                class="w-full h-full rounded-2xl border-2 border-white/5 avatar-img transition-all bg-black p-0.5"
+                                alt="avatar">
+                            <div class="status-dot"></div>
+                        </div>
+                        <div class="flex-grow">
+                            <p class="text-base font-black text-white group-hover:text-primary transition-colors">{{
+                                member.display_name }}</p>
+                            <div class="flex items-center gap-2 mt-1">
                                 <span
-                                    class="material-icons text-primary text-sm opacity-0 group-hover:opacity-100 transition-opacity">check</span>
+                                    class="text-[9px] font-black tracking-[0.2em] px-2 py-0.5 rounded bg-white/5 text-white/40 uppercase">
+                                    {{ member.id === m.chief_id ? 'CHIEF' : 'BRAWLER' }}
+                                </span>
                             </div>
-                            <p class="text-sm text-slate-300 group-hover:text-white transition-colors">Breach the
-                                Perimeter of the Forbidden Garden</p>
                         </div>
-                        <div class="flex items-center gap-4 group cursor-default">
-                            <div
-                                class="w-6 h-6 border-2 border-primary/30 rounded flex items-center justify-center group-hover:border-primary transition-colors bg-primary/5">
-                                <span
-                                    class="material-icons text-primary text-sm opacity-0 group-hover:opacity-100 transition-opacity">check</span>
-                            </div>
-                            <p class="text-sm text-slate-300 group-hover:text-white transition-colors">Destroy 3 Shadow
-                                Anchors in the Moonlit Grove</p>
-                        </div>
-                        <div class="flex items-center gap-4 group cursor-default">
-                            <div
-                                class="w-6 h-6 border-2 border-primary/30 rounded flex items-center justify-center group-hover:border-primary transition-colors bg-primary/5">
-                                <span
-                                    class="material-icons text-primary text-sm opacity-0 group-hover:opacity-100 transition-opacity">check</span>
-                            </div>
-                            <p class="text-sm text-slate-300 group-hover:text-white transition-colors">Defeat The Shadow
-                                Weaver and collect the Lunar Silk</p>
-                        </div>
+                        @if (isChief() && member.id !== _passport.userId()) {
+                        <button (click)="false"
+                            class="p-2 text-white/10 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all material-icons"
+                            title="Kick Member">
+                            Remove
+                        </button>
+                        }
                     </div>
-                </div>
-
-                <!-- Rewards -->
-                <div
-                    class="mb-10 p-6 bg-gradient-to-br from-primary/10 to-transparent rounded-xl border border-primary/20 relative overflow-hidden group">
-                    <div class="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity">
+                    } @empty {
+                    <div class="py-12 text-center border-2 border-dashed border-white/5 rounded-[2.5rem]">
+                        <span class="material-icons text-white/10 text-4xl mb-4">radar</span>
+                        <p class="text-xs font-black text-white/20 tracking-[0.3em] uppercase">Awaiting Personnel</p>
                     </div>
-
-                    <h4 class="font-display text-lg font-bold mb-6 flex items-center gap-2 text-white relative z-10">
-                        <span class="w-1 h-6 bg-primary shadow-[0_0_10px_#8b5cf6]"></span>
-                        PROTOCOL REWARDS
-                    </h4>
-                    <div class="flex flex-wrap gap-8 relative z-10">
-                        <div class="flex items-center gap-4 transform group-hover:translate-x-1 transition-transform">
-                            <div
-                                class="w-12 h-12 rounded-lg bg-gold/10 flex items-center justify-center border border-gold/30 shadow-lg shadow-gold/5">
-                                <span class="material-icons text-gold text-2xl">monetization_on</span>
-                            </div>
-                            <div>
-                                <p class="text-xs font-bold opacity-60 uppercase text-slate-400">Tokens</p>
-                                <p class="font-display text-xl font-black text-gold drop-shadow-sm">2,500</p>
-                            </div>
-                        </div>
-                        <div
-                            class="flex items-center gap-4 transform group-hover:translate-x-1 transition-transform delay-75">
-                            <div
-                                class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/30 shadow-lg shadow-primary/5">
-                                <span class="material-icons text-primary text-2xl">military_tech</span>
-                            </div>
-                            <div>
-                                <p class="text-xs font-bold opacity-60 uppercase text-slate-400">Experience</p>
-                                <p class="font-display text-xl font-black text-primary drop-shadow-sm">12,000 XP</p>
-                            </div>
-                        </div>
-                        <div
-                            class="flex items-center gap-4 transform group-hover:translate-x-1 transition-transform delay-150">
-                            <div
-                                class="w-12 h-12 rounded-lg bg-purple-500/10 flex items-center justify-center border border-purple-500/30 shadow-lg shadow-purple-500/5">
-                                <span class="material-icons text-purple-400 text-2xl">inventory_2</span>
-                            </div>
-                            <div>
-                                <p class="text-xs font-bold opacity-60 uppercase text-slate-400">Loot Drop</p>
-                                <p class="font-display text-xl font-black text-purple-400 drop-shadow-sm">EPIC CHEST</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Actions -->
-                <div class="flex flex-col sm:flex-row items-center gap-4 relative z-10">
-                    @if (!isMember()) {
-                    <button (click)="joinMission()"
-                        class="w-full sm:w-auto px-12 py-5 bg-primary hover:bg-primary/90 text-white font-display font-black tracking-[0.2em] rounded-lg shadow-lg shadow-primary/40 transition-all active:scale-95 hover:shadow-primary/60 flex items-center justify-center gap-3 group">
-                        ACCEPT PROTOCOL
-                        <span class="material-icons group-hover:translate-x-1 transition-transform">double_arrow</span>
-                    </button>
-                    } @else {
-                    <button (click)="leaveMission()"
-                        class="w-full sm:w-auto px-12 py-5 bg-red-600 hover:bg-red-700 text-white font-display font-black tracking-[0.2em] rounded-lg shadow-lg shadow-red-600/40 transition-all active:scale-95 flex items-center justify-center gap-3">
-                        ABORT PROTOCOL
-                        <span class="material-icons">cancel</span>
-                    </button>
-
-                    <a [routerLink]="['/mission-chat', m.id]"
-                        class="w-full sm:w-auto px-8 py-5 bg-emerald-600 hover:bg-emerald-700 text-white font-display font-bold tracking-[0.1em] rounded-lg transition-all flex items-center justify-center gap-2">
-                        <span class="material-icons">chat</span>
-                        SQUAD COMMS
-                    </a>
                     }
-
-                    <button routerLink="/leaderboard"
-                        class="w-full sm:w-auto px-8 py-5 border border-primary/40 hover:bg-primary/10 text-primary dark:text-gold font-display font-bold tracking-[0.1em] rounded-lg transition-all hover:border-primary/60">
-                        VIEW LEADERBOARD
-                    </button>
                 </div>
-            </section>
+            </div>
+        </div>
 
-            <!-- Footer Widgets -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Related Card -->
-                <div class="p-6 bg-card-light dark:bg-card-dark rounded-xl border border-primary/10 hover:border-gold/30 transition-all cursor-pointer group bg-opacity-90 backdrop-blur-sm"
-                    [appThreeDTilt]="10">
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="text-[10px] font-bold text-gold tracking-widest uppercase">Related Card</span>
-                        <span
-                            class="material-icons text-gold text-sm opacity-0 group-hover:opacity-100 transition-opacity">open_in_new</span>
-                    </div>
-                    <div class="flex gap-4">
-                        <div class="w-20 h-28 bg-primary/20 rounded border border-primary/40 overflow-hidden relative">
-                            <img src="/assets/card/card-img-02.jpg" alt="Card"
-                                class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500">
-                            <div
-                                class="absolute inset-0 bg-gold/10 opacity-0 group-hover:opacity-100 transition-opacity mix-blend-overlay">
-                            </div>
-                        </div>
-                        <div>
-                            <h5
-                                class="font-display font-bold mb-1 text-slate-100 group-hover:text-gold transition-colors">
-                                SPIRIT WARDEN</h5>
-                            <p class="text-xs opacity-60 mb-3 text-slate-400 line-clamp-2">Effective against Shadow
-                                class enemies. +20% Shield in Garden biomes.</p>
-                            <button
-                                class="text-[10px] font-bold text-primary underline decoration-primary/50 hover:decoration-primary transition-all">EQUIP
-                                NOW</button>
-                        </div>
-                    </div>
+        <!-- RIGHT COLUMN: INTEL & COMMS -->
+        <div class="lg:col-span-7 flex flex-col space-y-10 animate-fade-in-up" style="animation-delay: 0.1s">
+
+            <!-- MISSION INTEL CARD -->
+            <div class="premium-card p-10 space-y-10">
+                <div class="flex items-center gap-4 text-primary/40">
+                    <span
+                        class="w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_15px_rgba(124,58,237,0.8)]"></span>
+                    <span class="text-[10px] font-black tracking-[0.5em] uppercase">MISSION DETAILS #{{ m.id }}</span>
                 </div>
 
-                <!-- Party Finder -->
-                <div class="p-6 bg-card-light dark:bg-card-dark rounded-xl border border-primary/10 hover:border-gold/30 transition-all cursor-pointer group bg-opacity-90 backdrop-blur-sm"
-                    [appThreeDTilt]="10">
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="text-[10px] font-bold text-gold tracking-widest uppercase">Party Finder</span>
-                        <span
-                            class="material-icons text-gold text-sm opacity-0 group-hover:opacity-100 transition-opacity">groups</span>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <div class="flex -space-x-3">
-                            <img src="assets/default-avatar.png" alt="Avatar"
-                                class="w-10 h-10 rounded-full border-2 border-background-dark object-cover">
-                            <img src="assets/default-avatar.png" alt="Avatar"
-                                class="w-10 h-10 rounded-full border-2 border-background-dark object-cover">
-                            <div
-                                class="w-10 h-10 rounded-full border-2 border-background-dark bg-primary flex items-center justify-center text-xs font-bold text-white shadow-lg">
-                                +12</div>
-                        </div>
+                <p class="text-2xl md:text-3xl leading-snug text-white/90 font-medium tracking-tight">
+                    {{ m.description || 'Secure communication established. No specialized briefing data available for
+                    this operation.' }}
+                </p>
+
+                <!-- REWARDS GRID -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-white/5">
+                    <div class="reward-orb token">
+                        <div class="icon-box">💰</div>
                         <div>
-                            <h5
-                                class="font-display font-bold mb-0 text-slate-100 group-hover:text-gold transition-colors">
-                                OPEN LOBBIES</h5>
-                            <p class="text-xs opacity-60 text-slate-400">12 parties looking for members.</p>
+                            <p class="text-[10px] font-black tracking-[0.3em] text-white/20 uppercase mb-1">TOKENS</p>
+                            <p class="text-3xl font-black text-white">2,500</p>
+                        </div>
+                    </div>
+                    <div class="reward-orb xp">
+                        <div class="icon-box">⚡</div>
+                        <div>
+                            <p class="text-[10px] font-black tracking-[0.3em] text-white/20 uppercase mb-1">EXP DATA</p>
+                            <p class="text-3xl font-black text-white">500 XP</p>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- MISSION COMMS CARD -->
+            <div class="flex-grow flex flex-col premium-card min-h-[600px]">
+                @if (isMember() || isChief()) {
+                <div class="flex-grow flex flex-col">
+                    <!-- Chat Header -->
+                    <div class="px-10 py-6 border-b border-white/5 flex items-center justify-between bg-white/[0.01]">
+                        <div class="flex items-center gap-4">
+                            <div class="w-2 h-10 bg-primary rounded-full"></div>
+                            <div>
+                                <h3 class="text-xs font-black tracking-[0.3em] text-white/40 uppercase mb-1">
+                                    SQUAD CHANNEL</h3>
+                                <p class="text-lg font-black text-white">Team Chat</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-[10px] font-black text-emerald-500 tracking-widest">ACTIVE LINK</span>
+                            <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_#10b981]">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Chat Component -->
+                    <div class="flex-grow relative overflow-hidden">
+                        <app-mission-chat [missionId]="m.id" [chiefId]="m.chief_id"></app-mission-chat>
+                    </div>
+                </div>
+                } @else {
+                <div class="flex-grow flex flex-col items-center justify-center p-12 text-center group">
+                    <div class="relative w-32 h-32 mb-10">
+                        <div
+                            class="absolute inset-0 bg-primary/20 blur-3xl group-hover:bg-primary/40 transition-all rounded-full scale-150">
+                        </div>
+                        <div
+                            class="relative w-full h-full bg-black/60 border border-white/10 rounded-full flex items-center justify-center shadow-2xl overflow-hidden">
+                            <span
+                                class="material-icons text-primary/60 text-6xl group-hover:scale-110 transition-transform duration-500">fingerprint</span>
+                            <div class="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent opacity-50">
+                            </div>
+                        </div>
+                    </div>
+                    <h3 class="text-3xl font-black mb-4 text-white tracking-tighter">ENCRYPTION DETECTED</h3>
+                    <p class="text-sm text-white/40 max-w-sm mb-12 leading-relaxed font-medium">
+                        Operational frequency is restricted. Establish identity by joining the protocol.
+                    </p>
+
+                    <button (click)="joinMission()" class="action-btn-v2 primary px-16 group/btn">
+                        <span class="relative z-10 flex items-center gap-4">
+                            ACCEPT PROTOCOL
+                            <span class="material-icons group-hover/btn:translate-x-2 transition-transform">bolt</span>
+                        </span>
+                    </button>
+                </div>
+                }
+            </div>
+
+            <!-- ABORT ACTION -->
+            @if (isMember() && !isChief()) {
+            <div class="flex justify-end pt-4 animate-fade-in-up" style="animation-delay: 0.2s">
+                <button (click)="leaveMission()" class="action-btn-v2 danger">
+                    <span class="material-icons">power_settings_new</span>
+                    ABORT PROTOCOL
+                </button>
+            </div>
+            }
         </div>
-</div>
-</main>
-}
-
-@else {
-<!-- Fallback if nothing matches (shouldn't happen with error check) -->
-<div class="p-20 text-center text-slate-500">
-    <p>No mission data available.</p>
-</div>
-}
-
-<footer class="mt-20 py-12 border-t border-primary/10 text-center opacity-40">
-    <p class="font-display tracking-[0.5em] text-sm text-slate-500">KAMUI PROTOCOL v2.04</p>
-    <p class="text-[10px] mt-2 uppercase tracking-widest text-slate-600">Ensuring the balance between worlds.</p>
-</footer>
+    </div>
+    }
 </div>

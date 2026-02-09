@@ -8,7 +8,6 @@ export class ThreeDTiltDirective {
     @Input('appThreeDTilt') intensity: number = 40; // Alias input to selector name
 
     constructor(private el: ElementRef, private renderer: Renderer2) {
-        console.log('3D Tilt Directive Initialized on:', this.el.nativeElement);
         this.renderer.setStyle(this.el.nativeElement, 'transform-style', 'preserve-3d');
     }
 

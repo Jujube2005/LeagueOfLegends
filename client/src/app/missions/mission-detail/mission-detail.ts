@@ -1,28 +1,36 @@
-import { Component, inject, signal, OnInit, computed } from '@angular/core'
+import { Component, inject, signal, OnInit, computed, Input } from '@angular/core'
 import { CommonModule, DatePipe } from '@angular/common'
 import { ActivatedRoute, Router, RouterLink } from '@angular/router'
 import { MissionService } from '../../_services/mission-service'
 import { PassportService } from '../../_services/passport-service'
 import { Mission } from '../../_models/mission'
 import { ThreeDTiltDirective } from '../../_directives/three-d-tilt.directive'
+import { MissionChatComponent } from '../../_components/mission-chat/mission-chat'
 
 @Component({
     selector: 'app-mission-detail',
     standalone: true,
-    imports: [CommonModule, RouterLink, DatePipe, ThreeDTiltDirective],
+    imports: [CommonModule, RouterLink, DatePipe, ThreeDTiltDirective, MissionChatComponent],
     templateUrl: './mission-detail.html',
     styleUrls: ['./mission-detail.scss']
 })
 export class MissionDetail implements OnInit {
     private _route = inject(ActivatedRoute)
     private _router = inject(Router)
-    private _missionService = inject(MissionService)
-    public _passport = inject(PassportService)
+    private _missionService: MissionService = inject(MissionService)
+    public _passport: PassportService = inject(PassportService)
 
     mission = signal<Mission | undefined>(undefined)
     crew = signal<any[]>([])
     isLoading = signal<boolean>(true)
     error = signal<string | null>(null)
+
+    @Input() set id(val: number | string | null) {
+        if (val) {
+            this.missionId = Number(val);
+            this.loadMissionData();
+        }
+    }
 
     missionId: number = 0
 
@@ -38,20 +46,12 @@ export class MissionDetail implements OnInit {
     })
 
     ngOnInit() {
-        console.log('MissionDetail OnInit initialized');
         this._route.params.subscribe(params => {
-            console.log('Route params changed:', params);
-            if (params['id']) {
+            if (params['id'] && this.missionId === 0) {
                 this.missionId = +params['id']
                 if (!isNaN(this.missionId) && this.missionId > 0) {
                     this.loadMissionData()
-                } else {
-                    this.error.set("Invalid Mission ID format");
-                    this.isLoading.set(false);
                 }
-            } else {
-                this.error.set("No Mission ID provided");
-                this.isLoading.set(false);
             }
         })
     }
@@ -59,39 +59,32 @@ export class MissionDetail implements OnInit {
     async loadMissionData() {
         this.isLoading.set(true)
         this.error.set(null)
-        console.log('Loading mission data for ID:', this.missionId);
 
         try {
             // Fetch mission details
-            const mission = await this._missionService.getMission(this.missionId).catch(err => {
-                console.error("Failed to fetch mission:", err);
-                throw err;
-            });
+            const mission = await this._missionService.getMission(this.missionId);
 
-            if (!mission) throw new Error("Mission data is empty");
+            if (!mission) throw new Error("Mission not found");
 
-            // Fetch crew details could fail without blocking the page
-            let crew = [];
+            // Fetch crew details - non-critical, continue even if it fails
+            let crew: any[] = [];
             try {
                 crew = await this._missionService.getCrew(this.missionId);
             } catch (err) {
-                console.warn("Failed to fetch crew (non-critical):", err);
+                console.warn(`Could not load crew for mission ${this.missionId}:`, err);
+                // Continue with empty crew array
             }
 
-            console.log('Mission loaded:', mission);
-            console.log('Crew loaded:', crew);
-
-            // Assign random image if not present (UI enhancement)
-            const missionAny = mission as any
+            // Assign fallback image if not present
             const missionWithImg = {
                 ...mission,
-                image_url: missionAny.image_url || missionAny.imageUrl || `/assets/card/card-img-0${(mission.id % 4) + 1}.jpg`
-            } as any
+                image_url: (mission as any).image_url || (mission as any).imageUrl || `/assets/card/card-img-0${(mission.id % 4) + 1}.jpg`
+            };
 
-            this.mission.set(missionWithImg)
+            this.mission.set(missionWithImg as Mission)
             this.crew.set(crew)
         } catch (e: any) {
-            console.error('Error loading mission data:', e)
+            console.error('Failed to load mission:', e)
             this.error.set(e?.message || e?.error?.message || 'Failed to load mission data')
         } finally {
             this.isLoading.set(false)

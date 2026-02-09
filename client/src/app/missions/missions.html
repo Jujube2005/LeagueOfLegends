@@ -18,7 +18,12 @@
         <!-- FILTER PANEL -->
         <div class="filter-panel">
             <div class="search-input-group">
-                <span class="material-icons">search</span>
+                <svg xmlns="http://www.w3.org/2000/svg"
+                    class="absolute left-4 top-1/2 -translate-y-1/2 z-10 pointer-events-none text-white/50 w-5 h-5"
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
                 <input type="text" [(ngModel)]="filter.name" placeholder="SEARCH PROTOCOL NAME..."
                     (keyup.enter)="onSubmit()" />
             </div>
@@ -59,13 +64,37 @@
             }
             } @else {
             @for (mission of missions$ | async; track mission.id) {
-            <div class="mission-card group">
+            <div class="mission-card group" [appThreeDTilt]="15">
+                <!-- Tech Corners -->
+                <div
+                    class="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-primary/60 rounded-tl-2xl z-20 pointer-events-none">
+                </div>
+                <div
+                    class="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-primary/60 rounded-tr-2xl z-20 pointer-events-none">
+                </div>
+                <div
+                    class="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-primary/60 rounded-bl-2xl z-20 pointer-events-none">
+                </div>
+                <div
+                    class="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-primary/60 rounded-br-2xl z-20 pointer-events-none">
+                </div>
+
+                <!-- Scanline -->
+                <div
+                    class="absolute inset-0 pointer-events-none z-10 opacity-20 bg-[url('/assets/images/scanline.png')] bg-repeat">
+                </div>
+
                 <div class="category-tag">{{ mission.category || 'OPERATION' }}</div>
 
-                <div class="card-image">
+                <div class="card-image holographic-sheen">
                     <img [src]="mission.image_url || '/assets/card/card-img-0' + (mission.id % 4 + 1) + '.jpg'"
                         [alt]="mission.name">
                     <div [class]="'status-badge ' + mission.status">{{ mission.status }}</div>
+
+                    <!-- Gradient Overlay -->
+                    <div
+                        class="absolute inset-0 bg-gradient-to-t from-[#140c2e] via-transparent to-transparent pointer-events-none">
+                    </div>
                 </div>
 
                 <div class="card-content">
@@ -74,19 +103,27 @@
 
                     <div class="card-stats">
                         <div class="stat">
-                            <span class="material-icons">person</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#7c3aed]" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
                             <span class="truncate max-w-[100px]">{{ mission.chief_display_name }}</span>
                         </div>
                         <div class="stat">
-                            <span class="material-icons">groups</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#7c3aed]" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
                             <span>{{ mission.crew_count }} / {{ mission.max_crew || 5 }}</span>
                         </div>
                     </div>
 
                     <div class="card-actions">
-                        <a [routerLink]="['/missions', mission.id]" class="btn-view">
+                        <button (click)="openMissionModal(mission.id)" class="btn-view">
                             VIEW DATA
-                        </a>
+                        </button>
 
                         @if (isSignin()) {
                         @if (!mission.is_member && mission.chief_id !== userId()) {
@@ -118,3 +155,33 @@
         </div>
     </div>
 </div>
+
+<!-- MISSION DETAIL MODAL -->
+@if (showModal()) {
+<div class="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-10">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-[#030105]/80 backdrop-blur-md transition-opacity animate-in fade-in duration-500"
+        (click)="closeMissionModal()"></div>
+
+    <!-- Modal Container -->
+    <div
+        class="relative w-full max-w-6xl max-h-[92vh] bg-[#07040a]/90 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] shadow-[0_20px_100px_rgba(0,0,0,0.8),0_0_40px_rgba(124,58,237,0.1)] animate-in zoom-in-95 duration-500 flex flex-col overflow-hidden">
+
+        <!-- Glowing Top Border Decor -->
+        <div
+            class="absolute top-0 left-1/4 right-1/4 h-[1px] bg-gradient-to-r from-transparent via-primary to-transparent opacity-50 z-[120]">
+        </div>
+
+        <!-- Close Button (Fixed at top-right of modal) -->
+
+        <!-- Scrollable Content -->
+        <div class="flex-1 overflow-y-auto custom-scrollbar overflow-x-hidden relative">
+            <button (click)="closeMissionModal()"
+                class="absolute top-6 right-6 z-[130] text-white transition-colors group opacity-50 hover:opacity-100">
+                <span class="text-2xl">❌</span>
+            </button>
+            <app-mission-detail [id]="selectedMissionId()"></app-mission-detail>
+        </div>
+    </div>
+</div>
+}

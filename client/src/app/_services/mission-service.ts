@@ -87,6 +87,13 @@ export class MissionService {
     return missions
   }
 
+  // *เพิ่ม
+  async getPopularMissions(): Promise<Mission[]> {
+    const url = this._base_url + '/view/popular'
+    const missions = await firstValueFrom(this._http.get<Mission[]>(url))
+    return missions
+  }
+
   // *เพิ่ม 
   async getMissionSummary(): Promise<MissionSummary> {
     const url = this._base_url + '/brawler/mission-summary'

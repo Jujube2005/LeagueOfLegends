@@ -7,16 +7,23 @@ import { FormsModule } from '@angular/forms'
 import { BehaviorSubject } from 'rxjs'
 import { AsyncPipe, DatePipe } from '@angular/common'
 import { PassportService } from '../_services/passport-service'
+import { MissionDetail } from './mission-detail/mission-detail'
+
+import { ThreeDTiltDirective } from '../_directives/three-d-tilt.directive'
 
 @Component({
   selector: 'app-missions',
-  imports: [FormsModule, AsyncPipe, DatePipe, RouterLink],
+  imports: [FormsModule, AsyncPipe, DatePipe, RouterLink, MissionDetail, ThreeDTiltDirective],
   templateUrl: './missions.html',
   styleUrl: './missions.scss',
 })
 export class Missions {
   private _mission = inject(MissionService)
   private _passport = inject(PassportService)
+
+  // Modal State
+  selectedMissionId = signal<number | null>(null)
+  showModal = signal(false)
   filter: MissionFilter = {}
   // missions: Mission[] = []
 
@@ -43,6 +50,19 @@ export class Missions {
   }
   async onSubmit() {
     this.loadMyMission()
+  }
+
+  openMissionModal(id: number) {
+    this.selectedMissionId.set(id);
+    this.showModal.set(true);
+    // Prevent scrolling when modal is open
+    document.body.style.overflow = 'hidden';
+  }
+
+  closeMissionModal() {
+    this.showModal.set(false);
+    this.selectedMissionId.set(null);
+    document.body.style.overflow = 'auto';
   }
 
   // *เพิ่ม
