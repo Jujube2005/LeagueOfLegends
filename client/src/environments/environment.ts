@@ -1,4 +1,4 @@
 export const environment = {
-    baseUrl: '',
-    xxx: 'xx'
+    production: true,
+    baseUrl: 'https://astra-api-web.onrender.com'
 }
