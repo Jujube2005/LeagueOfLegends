@@ -47,7 +47,9 @@ export class ErrorService {
           const navExtra: NavigationExtras = {
             state: { error: error.error }
           }
-          this._router.navigate(['/server-error'], navExtra)
+          if (this._router.url !== '/server-error') {
+            this._router.navigate(['/server-error'], navExtra)
+          }
           break
         default:
           this._snackBar.open('some thing went wrong!!, please try again later', 'ok', this._snackBarConfig)

@@ -27,6 +27,8 @@
         </div>
 
         @if (leaderboard$ | async; as players) {
+
+        @if (players.length > 0) {
         <!-- Top 3 Podium -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-end max-w-5xl mx-auto mb-20 perspective-1000">
 
@@ -225,6 +227,7 @@
                 </div>
             </div>
         </div>
+        }
         }
     </main>
 </div>
