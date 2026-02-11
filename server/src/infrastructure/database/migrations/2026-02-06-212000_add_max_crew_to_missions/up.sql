@@ -1,1 +1,2 @@
-ALTER TABLE missions ADD COLUMN max_crew INTEGER NOT NULL DEFAULT 5;
+-- ALTER TABLE missions ADD COLUMN max_crew ... 
+SELECT 1; 

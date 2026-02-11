@@ -2,7 +2,8 @@ use crate::domain::{
     entities::achievements::{Achievement, BrawlerAchievement},
     repositories::achievements::AchievementRepository,
 };
-use crate::infrastructure::database::{postgresql_connection::PgPoolSquad, schema::{achievements, brawler_achievements}};
+use crate::infrastructure::database::postgresql_connection::PgPoolSquad;
+use crate::schema::{achievements, brawler_achievements};
 use anyhow::Result;
 use async_trait::async_trait;
 use diesel::prelude::*;
