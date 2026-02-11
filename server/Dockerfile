@@ -1,31 +1,41 @@
-# Build stage for Rust server
-FROM rust:1.75-slim-bookworm as builder
+# Build stage
+FROM rust:1.75-bookworm as builder
 
 WORKDIR /usr/src/app
 COPY . .
 
-# Install dependencies for diesel (libpq for postgres)
-RUN apt-get update && apt-get install -y libpq-dev && rm -rf /var/lib/apt/lists/*
+# Install build dependencies
+RUN apt-get update && apt-get install -y libpq-dev pkg-config libssl-dev && rm -rf /var/lib/apt/lists/*
 
+# Build the application
 RUN cargo build --release
 
 # Final stage
-FROM debian:bookworm-slim
+FROM ubuntu:22.04
 
-RUN apt-get update && apt-get install -y libpq-dev ca-certificates && rm -rf /var/lib/apt/lists/*
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y \
+    libpq5 \
+    ca-certificates \
+    libssl3 \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
 # Copy the binary from builder
 COPY --from=builder /usr/src/app/target/release/server /app/server
+RUN chmod +x /app/server
 
-# Copy static files (Frontend build should be put here before building image or via another stage)
+# Copy static files
 COPY statics /app/statics
 
-# Set env vars defaults
+# Set environment variables
 ENV SERVER_PORT=80
 ENV STAGE=Production
+ENV RUST_LOG=info
+ENV RUST_BACKTRACE=1
 
 EXPOSE 80
 
-CMD ["./server"]
+# Run with shell to catch formatting errors or missing libs
+CMD /app/server

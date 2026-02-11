@@ -9,31 +9,40 @@ use crate::config::{
 
 pub fn load() -> Result<DotEnvyConfig> {
     dotenvy::dotenv().ok();
+    println!(">>> CONFIG: STARTING LOAD...");
+
+    let port_str = std::env::var("PORT")
+        .or_else(|_| std::env::var("SERVER_PORT"))
+        .unwrap_or_else(|_| "80".to_string());
+    println!(">>> CONFIG: PORT={}", port_str);
 
     let server = Server {
-        port: std::env::var("PORT")
-            .or_else(|_| std::env::var("SERVER_PORT"))
-            .unwrap_or_else(|_| "80".to_string())
-            .parse()?,
+        port: port_str.parse().unwrap_or(80),
         body_limit: std::env::var("SERVER_BODY_LIMIT")
             .unwrap_or_else(|_| "10".to_string())
-            .parse()?,
+            .parse().unwrap_or(10),
         timeout: std::env::var("SERVER_TIMEOUT")
             .unwrap_or_else(|_| "60".to_string())
-            .parse()?,
+            .parse().unwrap_or(60),
     };
 
-    let database = Database {
-        url: std::env::var("DATABASE_URL")
-            .expect("DATABASE_URL must be set"),
+    println!(">>> CONFIG: READING DATABASE_URL...");
+    let db_url = match std::env::var("DATABASE_URL") {
+        Ok(url) => url,
+        Err(_) => {
+            println!(">>> FATAL: DATABASE_URL IS MISSING!");
+            return Err(anyhow::anyhow!("DATABASE_URL is not set"));
+        }
     };
 
     let secret = std::env::var("JWT_USER_SECRET")
         .unwrap_or_else(|_| "change_me_in_production".to_string());
 
+    println!(">>> CONFIG: ALL FIELDS READ SUCCESSFULLY");
+
     let config = DotEnvyConfig {
         server,
-        database,
+        database: Database { url: db_url },
         secret,
     };
 

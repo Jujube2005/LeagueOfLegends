@@ -89,7 +89,20 @@ pub async fn start(config: Arc<DotEnvyConfig>, db_pool: Arc<PgPoolSquad>) -> Res
     let realtime_svc = Arc::new(MissionRealtimeService::new());
 
     let dir = "statics";
-    let static_service = ServeDir::new(dir).not_found_service(ServeFile::new(format!("{dir}/index.html")));
+    let index_path = format!("{dir}/index.html");
+    
+    // Check if statics and index.html exist to avoid startup panic
+    let static_service = if std::path::Path::new(&index_path).exists() {
+        println!(">>> SERVING STATIC FILES FROM: {}", dir);
+        axum::Router::new().fallback_service(
+            ServeDir::new(dir).not_found_service(ServeFile::new(index_path))
+        )
+    } else {
+        println!(">>> WARNING: statics/index.html NOT FOUND. Frontend will not be served.");
+        axum::Router::new().fallback(|| async { 
+            (StatusCode::NOT_FOUND, "Frontend assets missing. Please check server/statics folder.") 
+        })
+    };
 
     let app = Router::new()
         .nest("/api", api_serve(db_pool, notification_svc, tx, realtime_svc))
