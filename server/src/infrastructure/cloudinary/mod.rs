@@ -7,6 +7,7 @@ use chrono::Utc;
 use reqwest::multipart::{Form, Part};
 use sha1::{Digest, Sha1};
 use std::collections::HashMap;
+use tracing::{debug, error};
 
 pub struct UploadImageOptions {
     pub folder: Option<String>,
@@ -16,12 +17,11 @@ pub struct UploadImageOptions {
 
 fn form_builder(option: UploadImageOptions, cloud_env: &CloudinaryEnv) -> Result<Form> {
     let mut form = Form::new();
-    let timestamp = Utc::now().timestamp_millis().to_string();
-    let mut hasher = Sha1::new();
+    let timestamp = Utc::now().timestamp().to_string(); // Cloudinary expects seconds, not milliseconds
 
     let mut params_to_sign: HashMap<String, String> = HashMap::new();
-    params_to_sign.insert("resource_type".to_string(), "image".to_string());
     params_to_sign.insert("timestamp".to_string(), timestamp.clone());
+    
     if let Some(folder_name) = option.folder {
         params_to_sign.insert("folder".to_string(), folder_name);
     }
@@ -32,53 +32,84 @@ fn form_builder(option: UploadImageOptions, cloud_env: &CloudinaryEnv) -> Result
         params_to_sign.insert("transformation".to_string(), transformation);
     }
 
+    // Sort keys alphabetically
     let mut sorted_keys: Vec<_> = params_to_sign.keys().collect();
     sorted_keys.sort();
-    for (i, key) in sorted_keys.iter().enumerate() {
-        if let Some(value) = &params_to_sign.get(*key) {
-            let key_str = key.to_string();
-            let value_str = value.to_string();
-            if key_str != "resource_type" {
-                let key_value = &format!("{}={}", key_str, value_str);
-                hasher.update(key_value);
-                if i < sorted_keys.len() - 1 {
-                    hasher.update("&");
-                }
-            };
 
-            form = form.text(key_str, value_str);
+    // Build the signature string: key1=value1&key2=value2...API_SECRET
+    let mut signature_parts = Vec::new();
+    for key in sorted_keys {
+        if let Some(value) = params_to_sign.get(key) {
+            signature_parts.push(format!("{}={}", key, value));
+            // Add to form
+            form = form.text(key.clone(), value.clone());
         }
     }
-    hasher.update(cloud_env.api_secret.clone());
 
-    form = form.text("signature", format!("{:x}", hasher.finalize()));
+    let signature_string = format!("{}{}", signature_parts.join("&"), cloud_env.api_secret);
+    
+    let mut hasher = Sha1::new();
+    hasher.update(signature_string.as_bytes());
+    let signature = format!("{:x}", hasher.finalize());
+
+    form = form.text("signature", signature);
     form = form.text("api_key", cloud_env.api_key.clone());
-    form = form.text("timestamp", timestamp.clone());
+    
+    // Cloudinary also needs resource_type in the form for some endpoints, 
+    // but for /image/upload it's often redundant or inferred.
+    // However, some Cloudinary accounts require it to be pinned.
+    // We'll keep it but ensure it's NOT in the signature (already handled).
+    form = form.text("resource_type", "image");
 
     Ok(form)
 }
 
 pub async fn upload(base64_image: Base64Img, option: UploadImageOptions) -> Result<UploadedImg> {
-    let cloud_env = get_cloudinary_env()?;
+    let cloud_env = get_cloudinary_env()
+        .context("Missing Cloudinary environment variables (CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET)")?;
 
-    let file = Part::text(base64_image.into_inner());
+    let cloud_name = cloud_env.cloud_name.clone();
     let form = form_builder(option, &cloud_env)?;
-    let multipart = form.part("file", file);
+    
+    // Cloudinary supports Data URIs directly in the 'file' parameter
+    let multipart = form.text("file", base64_image.into_inner());
+    
     let client = reqwest::Client::new();
     let url = format!(
         "https://api.cloudinary.com/v1_1/{}/image/upload",
-        cloud_env.cloud_name
+        cloud_name
     );
+
+    debug!("Uploading to Cloudinary: {}", url);
 
     let response = client
         .post(&url)
         .multipart(multipart)
         .send()
         .await
-        .context(format!("upload to {}", url))?;
+        .map_err(|e| {
+            error!("Cloudinary connection error: {:?}", e);
+            anyhow::anyhow!("Failed to connect to Cloudinary: {}", e)
+        })?;
 
-    let text = response.text().await?;
-    let json: UploadedImg =
-        serde_json::from_str(&text).context(format!("failed to parse:\n\n {}", text))?;
+    let status = response.status();
+    let text = response.text().await.unwrap_or_else(|_| "Could not read response body".to_string());
+
+    if !status.is_success() {
+        error!("Cloudinary upload failed. Status: {}, Response: {}", status, text);
+        return Err(anyhow::anyhow!(
+            "Cloudinary upload failed (Status {}): {}",
+            status,
+            text
+        ));
+    }
+
+    let json: UploadedImg = serde_json::from_str(&text)
+        .map_err(|e| {
+            error!("Failed to parse Cloudinary response: {}. Error: {}", text, e);
+            anyhow::anyhow!("Failed to parse Cloudinary response: {}. Error: {}", text, e)
+        })?;
+    
+    debug!("Successfully uploaded image to Cloudinary: {}", json.url);
     Ok(json)
 }

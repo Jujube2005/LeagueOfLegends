@@ -126,7 +126,7 @@
                                     [disabled]="mission.crew_count >= mission.max_crew || mission.status === 'Completed' || mission.status === 'Failed'">
                                     @if(mission.crew_count >= mission.max_crew) { FULL }
                                     @else if(mission.status === 'Completed') { DONE }
-                                    @else { ENGAGE }
+                                    @else { JOIN }
                                 </button>
                                 } @else {
                                 <button class="btn-join" [disabled]="true" [style.background]="'#334155'">

@@ -7,9 +7,11 @@ import { AsyncPipe, DatePipe } from '@angular/common'
 import { BehaviorSubject } from 'rxjs'
 import { RouterLink } from '@angular/router'
 
+import { ThreeDTiltDirective } from '../_directives/three-d-tilt.directive'
+
 @Component({
   selector: 'app-joined-missions',
-  imports: [AsyncPipe, DatePipe, RouterLink],
+  imports: [AsyncPipe, DatePipe, RouterLink, ThreeDTiltDirective],
   templateUrl: './joined-missions.html',
   styleUrl: './joined-missions.scss',
 })

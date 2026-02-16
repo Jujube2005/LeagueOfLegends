@@ -2,7 +2,7 @@ use std::{net::SocketAddr, sync::Arc, time::Duration};
 
 use anyhow::{Ok, Result};
 use axum::{
-    Extension, Router, http::{
+    Extension, Router, extract::DefaultBodyLimit, http::{
         Method, StatusCode,
         header::{AUTHORIZATION, CONTENT_TYPE, HeaderValue},
     }
@@ -107,6 +107,7 @@ pub async fn start(config: Arc<DotEnvyConfig>, db_pool: Arc<PgPoolSquad>) -> Res
     let app = Router::new()
         .nest("/api", api_serve(db_pool, notification_svc, tx, realtime_svc))
         .fallback_service(static_service)
+        .layer(DefaultBodyLimit::disable())
         .layer(tower_http::timeout::TimeoutLayer::with_status_code(
             StatusCode::REQUEST_TIMEOUT,
             Duration::from_secs(config.server.timeout),

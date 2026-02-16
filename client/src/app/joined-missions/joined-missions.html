@@ -1,36 +1,95 @@
-<!-- *เพิ่ม  -->
+<div class="missions-page">
+    <div class="content-wrapper">
 
-<div class="mission-list">
-    @if((missions$ | async)?.length) {
-    <div class="header">
-        <span class="name">Name</span>
-        <span class="description">Description</span>
-        <span class="name">Chief</span>
-        <span class="crew_count">Number of Crew</span>
-        <span class="status">Status</span>
-        <span class="created_at">Created at</span>
-        <span class="updated_at">Updated at</span>
-        <span class="action">Actions</span>
-    </div>
-    @for (mission of missions$ | async; track mission.id) {
-    <div class="contents">
-        <span class="name">{{mission.name}}</span>
-        <span class="description">{{mission.description}}</span>
-        <span class="name">{{mission.chief_display_name}}</span>
-        <span class="crew_count">{{mission.crew_count}}</span>
-        <span class="status">{{mission.status}}</span>
-        <span class="created_at">{{mission.created_at | date:'short'}}</span>
-        <span class="updated_at">{{mission.updated_at | date:'short'}}</span>
+        <!-- HEADER -->
+        <div class="flex items-center justify-between mb-12">
+            <div>
+                <h1 class="font-display text-4xl font-black text-white tracking-widest uppercase mb-2">
+                    MY MISSIONS
+                </h1>
+                <p class="text-slate-500 text-xs uppercase tracking-[0.3em]">
+                    Active deployments and tactical assignments
+                </p>
+            </div>
 
-        <div class="actions">
-            <button [routerLink]="['/mission-chat', mission.id]" class="primary"
-                style="margin-right: 5px;">Chat</button>
-            <button (click)="leaveMission(mission.id)" class="warn">Leave</button>
+            <div class="h-px flex-1 mx-12 bg-primary/20 hidden md:block"></div>
+
+            <button routerLink="/missions"
+                class="bg-white/5 hover:bg-white/10 text-white border border-white/10 px-6 py-3 rounded-xl font-bold uppercase tracking-widest text-xs transition-all flex items-center gap-2">
+                <span class="material-symbols-outlined text-sm">explore</span>
+                FIND MISSIONS
+            </button>
         </div>
 
+        @if((missions$ | async)?.length) {
+        <div class="missions-grid">
+            @for (mission of missions$ | async; track mission.id) {
+            <div class="group h-full" [appThreeDTilt]="15">
+                <div class="astra-card w-full h-full">
+                    <div class="astra-frame"></div>
+                    <div class="astra-inner tech-corners p-0 overflow-hidden">
+                        <div class="scan-line"></div>
+
+                        <div class="category-tag">ASSIGNED</div>
+
+                        <div class="card-image holographic-sheen">
+                            <img [src]="mission.image_url || '/assets/card/card-img-0' + (mission.id % 4 + 1) + '.jpg'"
+                                [alt]="mission.name">
+                            <div [class]="'status-badge ' + mission.status">{{ mission.status }}</div>
+                            <div class="img-scanlines"></div>
+
+                            <!-- Gradient Overlay -->
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-[#140c2e] via-transparent to-transparent pointer-events-none">
+                            </div>
+                        </div>
+
+                        <div class="card-content">
+                            <h4 class="mission-name">{{ mission.name }}</h4>
+                            <p class="mission-desc">{{ mission.description }}</p>
+
+                            <div class="card-stats">
+                                <div class="stat">
+                                    <span class="material-symbols-outlined text-primary text-sm">person</span>
+                                    <span class="truncate max-w-[100px]">{{ mission.chief_display_name }}</span>
+                                </div>
+                                <div class="stat">
+                                    <span class="material-symbols-outlined text-primary text-sm">group</span>
+                                    <span>{{ mission.crew_count }} BRAWLER</span>
+                                </div>
+                                <div class="stat col-span-2 mt-2 opacity-50 italic text-[10px]">
+                                    JOINED {{ mission.created_at | date:'shortDate' }}
+                                </div>
+                            </div>
+
+                            <div class="card-actions">
+                                <button [routerLink]="['/mission-chat', mission.id]"
+                                    class="btn-view flex items-center justify-center gap-2">
+                                    <span class="material-symbols-outlined text-sm">chat</span>
+                                    CHAT
+                                </button>
+                                <button (click)="leaveMission(mission.id)"
+                                    class="btn-leave group/leave flex items-center justify-center gap-2">
+                                    <span
+                                        class="material-symbols-outlined text-sm transition-transform group-hover/leave:-translate-x-1">logout</span>
+                                    LEAVE
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            }
+        </div>
+        } @else {
+        <div class="empty-state">
+            <span class="material-symbols-outlined text-6xl opacity-20 mb-4">assignment_late</span>
+            <p class="text-xl font-bold text-white/40 tracking-widest uppercase mb-6">No Active Assignments</p>
+            <button routerLink="/missions"
+                class="bg-primary px-8 py-4 rounded-full font-black text-xs tracking-[0.2em] hover:scale-105 transition-transform shadow-lg shadow-primary/20">
+                DISCOVER OPERATIONS
+            </button>
+        </div>
+        }
     </div>
-    }
-    } @else {
-    <p style="padding: 1rem;">You have not joined any missions yet.</p>
-    }
 </div>

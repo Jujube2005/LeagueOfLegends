@@ -114,15 +114,8 @@ export class Profile implements OnInit {
 
   openDialog() {
     const ref = this._dialog.open(UploadImg)
-    ref.afterClosed().subscribe(async file => {
-      if (file) {
-        const error = await this._user.uploadAvatarImg(file)
-        if (error) {
-          console.error(error)
-        } else {
-          window.location.reload()
-        }
-      }
+    ref.afterClosed().subscribe((isSuccess: boolean | undefined) => {
+      // Data is already updated reactively via signals in UserService/PassportService
     })
   }
 

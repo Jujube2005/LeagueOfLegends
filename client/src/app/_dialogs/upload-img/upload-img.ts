@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { MatButtonModule } from '@angular/material/button'
 import { MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog'
 import { fileTypeFromBlob } from 'file-type'
+import { UserService } from '../../_services/user-service'
 
 @Component({
   selector: 'app-upload-img',
@@ -11,14 +12,43 @@ import { fileTypeFromBlob } from 'file-type'
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UploadImg {
-  acceptedMimeType = ['image/jpeg', 'image/png']
+onFileDropped($event: DragEvent) {
+throw new Error('Method not implemented.')
+}
+  acceptedMimeType = ['image/jpeg', 'image/png', 'image/webp']
   imgFile: File | undefined
   imgPreview = signal<string | undefined>(undefined)
-  errorMsg = signal<string | undefined>(undefined)
-  private readonly _dialogRef = inject(MatDialogRef<UploadImg>)
+  errorMsg = signal<string | undefined>(undefined) // Local validation errors
 
-  onSubmit() {
-    this._dialogRef.close(this.imgFile)
+  isUploading = signal(false)
+  uploadError = signal<string | undefined>(undefined) // Server errors
+  isSuccess = signal(false)
+
+  private readonly _dialogRef = inject(MatDialogRef<UploadImg>)
+  private readonly _userService = inject(UserService)
+
+  async onSubmit() {
+    if (!this.imgFile) return
+
+    this.isUploading.set(true)
+    this.uploadError.set(undefined)
+
+    try {
+      const error = await this._userService.uploadAvatarImg(this.imgFile)
+      if (error) {
+        this.uploadError.set(error)
+      } else {
+        this.isSuccess.set(true)
+        // Wait a bit to show success state before reloading
+        setTimeout(() => {
+          this._dialogRef.close(true)
+        }, 1500)
+      }
+    } catch (e: any) {
+      this.uploadError.set(e.message || 'System connectivity failure')
+    } finally {
+      this.isUploading.set(false)
+    }
   }
   async onImgPicked(event: Event) {
     this.imgFile = undefined

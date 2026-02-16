@@ -123,8 +123,7 @@ export class MissionDetail implements OnInit {
                 if (error) {
                     alert('Upload failed: ' + error);
                 } else {
-                    // Auto refresh as requested
-                    window.location.reload();
+                    await this.loadMissionData();
                 }
             } catch (e) {
                 console.error(e);

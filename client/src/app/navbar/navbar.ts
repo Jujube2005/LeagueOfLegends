@@ -7,6 +7,8 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { CommonModule } from '@angular/common';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../_dialogs/confirmation-dialog/confirmation-dialog';
+import { globalPolling } from '../_services/polling-service';
+
 
 @Component({
   selector: 'app-navbar',
@@ -30,8 +32,8 @@ export class Navbar implements OnDestroy {
   showNotifications = signal(false)
   processing = signal<Set<number>>(new Set())
   invites = this._inviteService.invites;
+  private _unsubscribePolling?: () => void;
 
-  private _pollingInterval: any;
 
   constructor() {
     this._router.events.subscribe(() => {
@@ -59,20 +61,24 @@ export class Navbar implements OnDestroy {
   }
 
   startPolling() {
-    this.stopPolling();
-    this._pollingInterval = setInterval(() => {
-      if (this.display_name()) {
-        this.updateInviteCount();
-      }
-    }, 10000); // Poll every 10 seconds
+    globalPolling.start();
+    if (!this._unsubscribePolling) {
+      this._unsubscribePolling = globalPolling.subscribe(() => {
+        if (this.display_name()) {
+          this.updateInviteCount();
+        }
+      });
+    }
   }
 
   stopPolling() {
-    if (this._pollingInterval) {
-      clearInterval(this._pollingInterval);
-      this._pollingInterval = null;
+    if (this._unsubscribePolling) {
+      this._unsubscribePolling();
+      this._unsubscribePolling = undefined;
     }
+    globalPolling.stop();
   }
+
 
   async updateInviteCount() {
     try {

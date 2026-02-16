@@ -1,23 +1,76 @@
-<h2 mat-dialog-title>Upload Image</h2>
-<mat-dialog-content>
-    <div class="content-container">
-        @if (imgPreview()) {
-        <div class="image-preview">
-            <img [src]="imgPreview()" alt="upload image">
+<div class="upload-dialog-container">
+    <header class="dialog-header">
+        <div class="header-icon">
+            <span class="material-symbols-outlined">identity_platform</span>
+        </div>
+        <div class="header-text">
+            <h2 mat-dialog-title>Sync Neural Interface</h2>
+            <p class="subtitle">Upload biometric avatar for system identification</p>
+        </div>
+    </header>
+
+    <mat-dialog-content class="upload-content">
+        <div class="upload-zone" [class.has-image]="imgPreview()" [class.uploading]="isUploading()"
+            [class.success]="isSuccess()" [class.error]="uploadError()" (click)="!isUploading() && filePicker.click()"
+            (dragover)="$event.preventDefault()"
+            (drop)="$event.preventDefault(); !isUploading() && onFileDropped($event)">
+
+            @if (isSuccess()) {
+            <div class="status-overlay success-overlay">
+                <span class="material-symbols-outlined state-icon">check_circle</span>
+                <p class="status-text">NEURAL LINK SYNCED</p>
+            </div>
+            } @else if (isUploading()) {
+            <div class="status-overlay loading-overlay">
+                <div class="loader-ring"></div>
+                <p class="status-text pulse">UPLOADING BIOMETRICS...</p>
+            </div>
+            } @else {
+            @if (imgPreview()) {
+            <div class="preview-wrapper">
+                <img [src]="imgPreview()" alt="biometric preview">
+                <div class="scan-line"></div>
+            </div>
+            } @else {
+            <div class="drop-placeholder">
+                <span class="material-symbols-outlined large-icon">cloud_upload</span>
+                <p class="main-text">Click or Drop Image Here</p>
+                <p class="sub-text">JPG, PNG, WebP (MAX 2MB)</p>
+            </div>
+            }
+            }
+            <input type="file" #filePicker (change)="onImgPicked($event)" accept=".jpg, .jpeg, .png, .webp"
+                style="display: none;">
+        </div>
+
+        @if (imgFile && !isUploading() && !uploadError() && !isSuccess()) {
+        <div class="file-info">
+            <span class="material-symbols-outlined">attach_file</span>
+            <span class="file-name">{{imgFile.name}}</span>
         </div>
         }
-        @if (imgFile) {
-        <p>{{imgFile.name}}</p>
-        }
-        @if (errorMsg()) {
-        <p class="error-msg">{{errorMsg()}}</p>
-        }
-    </div>
 
-    <input type="file" #filePicker (change)="onImgPicked($event)" accept=".jpg, .png">
+        @if (errorMsg() || uploadError()) {
+        <div class="error-banner-premium" [class.glitch-border]="uploadError()">
+            <div class="error-header">
+                <span class="material-symbols-outlined">warning</span>
+                <span class="error-title">{{ uploadError() ? 'SYSTEM FAULT DETECTED' : 'VALIDATION ERROR' }}</span>
+            </div>
+            <p class="error-body">{{ uploadError() || errorMsg() }}</p>
+            @if (uploadError()) {
+            <div class="error-code">STATUS_CODE: 500_INTERNAL_MALFUNCTION</div>
+            }
+        </div>
+        }
+    </mat-dialog-content>
 
-    <mat-dialog-actions>
-        <button matButton (click)="filePicker.click()">Pick Image</button>
-        <button matButton (click)="onSubmit()" [disabled]="!imgFile">Upload</button>
+    @if (!isSuccess()) {
+    <mat-dialog-actions align="end">
+        <button class="btn-cancel" mat-button mat-dialog-close [disabled]="isUploading()">Cancel</button>
+        <button class="btn-submit" (click)="onSubmit()" [disabled]="!imgFile || isUploading()">
+            <span class="material-symbols-outlined">{{ isUploading() ? 'sync' : 'upload' }}</span>
+            {{ isUploading() ? 'Syncing...' : 'Initiate Sync' }}
+        </button>
     </mat-dialog-actions>
-</mat-dialog-content>
+    }
+</div>

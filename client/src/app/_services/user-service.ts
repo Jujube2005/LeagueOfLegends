@@ -27,8 +27,13 @@ export class UserService {
       const cloudinaryImg = await firstValueFrom(this._http.post<CloudinaryImage>(url, uploadImg))
       this._passport.saveAvatarImgUrl(cloudinaryImg.url)
     } catch (error: any) {
-      return error.error as string
+      console.error('Upload error detail:', error);
+      const errorBody = error.error;
+      if (typeof errorBody === 'string') return errorBody;
+      if (errorBody && errorBody.message) return errorBody.message;
+      return error.message || 'Server upload failed';
     }
+
     return null
   }
 

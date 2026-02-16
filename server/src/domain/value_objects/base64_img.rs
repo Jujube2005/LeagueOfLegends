@@ -9,21 +9,34 @@ impl Base64Img {
     }
 
     pub fn new(data: String) -> Result<Self> {
-        if data.is_empty() {
+        let clean_data = data.replace(|c: char| c.is_whitespace(), "");
+        if clean_data.is_empty() {
             return Err(anyhow::anyhow!("data can not be empty !!"));
         }
-        let bytes = match general_purpose::STANDARD.decode(&data) {
+        let bytes = match general_purpose::STANDARD.decode(&clean_data) {
             Ok(bs) => bs,
-            Err(_) => return Err(anyhow::anyhow!("invalid img data !!")),
-        };
-        let file_type = match infer::get(&bytes) {
-            Some(t) if t.mime_type() == "image/png" || t.mime_type() == "image/jpeg" => {
-                t.mime_type()
+            Err(_) => {
+                // Try decoding without padding if standard fails
+                match general_purpose::STANDARD_NO_PAD.decode(&clean_data) {
+                    Ok(bs) => bs,
+                    Err(e) => return Err(anyhow::anyhow!("invalid base64 data: {}. data length: {}", e, clean_data.len())),
+                }
             }
-            _ => return Err(anyhow::anyhow!("un-support file type")),
         };
 
-        let base64text = format!("data:{};base64,{}", file_type, data);
+        let file_type = match infer::get(&bytes) {
+            Some(t) => {
+                let mime = t.mime_type();
+                if mime == "image/png" || mime == "image/jpeg" || mime == "image/jpg" || mime == "image/webp" {
+                    mime
+                } else {
+                    return Err(anyhow::anyhow!("unsupported file type: {}. only png, jpeg, and webp are allowed.", mime));
+                }
+            }
+            None => return Err(anyhow::anyhow!("could not identify file type. first few bytes: {:02X?}", &bytes[..std::cmp::min(bytes.len(), 10)])),
+        };
+
+        let base64text = format!("data:{};base64,{}", file_type, clean_data);
         Ok(Self(base64text))
     }
 }

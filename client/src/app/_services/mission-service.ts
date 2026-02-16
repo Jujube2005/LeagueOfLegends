@@ -149,7 +149,11 @@ export class MissionService {
       await firstValueFrom(this._http.post(url, uploadImg))
       return null
     } catch (error: any) {
-      return error.error as string
+      console.error('Mission upload error detail:', error);
+      const errorBody = error.error;
+      if (typeof errorBody === 'string') return errorBody;
+      if (errorBody && errorBody.message) return errorBody.message;
+      return error.message || 'Mission image upload failed';
     }
   }
 }

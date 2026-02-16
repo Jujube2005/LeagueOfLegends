@@ -223,13 +223,12 @@
                 }
             </div>
 
-            <!-- ABORT ACTION -->
+            <!-- leave -->
             @if (isMember() && !isChief()) {
             <div class="flex justify-center pt-8 animate-fade-in-up" style="animation-delay: 0.2s">
                 <button (click)="leaveMission()"
                     class="action-btn-v2 danger w-full md:w-auto px-12 py-4 shadow-lg shadow-red-500/10 hover:shadow-red-500/20 border border-red-500/20">
-                    <span class="material-icons text-red-400">logout</span>
-                    ABORT PROTOCOL
+                    <span class="material-icons text-red-400">LEAVE</span>
                 </button>
             </div>
             }
